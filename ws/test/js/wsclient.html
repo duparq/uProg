@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset=utf-8>
+    <title>WebSocket Example</title>
+  </head>
+  <body>
+    <h1>WebSocket Example</h1>
+
+    <p>Using WebSocket, exchanging data with a server.</p>
+    <form>
+      <input type="button" onclick="helloServer()" value="Send me a picture">
+      <input type="button" onclick="getMicroseconds()" value="Compute latency">
+    </form>
+    <br>
+
+    <fieldset><legend>Message</legend> 
+      <div id="message"></div>
+    </fieldset>
+    <fieldset><legend>Picture</legend>
+      <canvas id="picture"></canvas>
+    </fieldset>
+
+    <p><small>&copy; 2014 Xul.fr</small></p>
+  </body>
+  <script src="wsclient.js"></script>
+</html>
