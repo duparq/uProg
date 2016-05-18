@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html class="h100">
+  <head>
+    <meta charset="UTF-8">
+    <title>UBlockly</title>
+    <style>
+      body {
+      font-family: sans-serif;
+      margin: 0;
+      }
+
+      #appname {
+      font-size: 150%;
+      font-weight: bold;
+      padding-left: 10px;
+      padding-right: 20px;
+      }
+    </style>
+    <link rel="stylesheet" href="menubar.css">
+    <link rel="stylesheet" href="flex.css">
+  </head>
+  <body class="h100">
+    <div id="layout" class="h100 flex-vbox flex-fill" style="max-height:100%">
+
+      <!-- Menubar inside topbar
+	-->
+      <div id="topbar">
+	<span id="appname">UBlockly</span>
+	<div id="menubar">
+	  <div class="menu">
+	    <span name="file"></span>
+	    <div class="menucontent">
+	      <div name="open"></div>
+	      <div name="save"></div>
+	    </div>
+	  </div>
+	  <div class="menu">
+	    <span name="config"></span>
+	    <div class="menucontent">
+	      <div name="server"></div>
+	      <div name="serial"></div>
+	    </div>
+	  </div>
+	</div>
+        <select id="uilang"></select>
+      </div>
+      
+      <!-- Console inside flex box
+	-->
+      <div class="content flex-vbox flex-fill">
+	<pre id="console" class="flex-fill">-- Messages --<br></pre>
+      </div>
+
+    </div>
+  </body>
+  <script src="menubar.js"></script>
+  <script src="uilang.js"></script>
+  <!-- <script type="text/javascript"> -->
+  <!--   var c = document.getElementById("console"); -->
+  <!--   for ( var n=0 ; n<=50 ; n++ ) { c.innerHTML = c.innerHTML.concat(n+"\r\n"); } -->
+  <!-- 		      </script> -->
+</html>
