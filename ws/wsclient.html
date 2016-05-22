@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset=utf-8>
+    <title>WebSocket client</title>
+  </head>
+  <body>
+    <h1>WebSocket client</h1>
+    <form id="form">
+      Server:
+      <input id="server_ip" type="text" value="127.0.0.1" required
+	     pattern="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$">
+      Port:
+      <input id="server_port" type="text" value="8080" required
+	     pattern="^[0-9]+$">
+      <input type="checkbox" id="check" value="Run" disabled checked>Run
+    </form>
+    <br>
+
+    <fieldset><legend>Latency statistics</legend> 
+      <div>Values: <span id="values"></span></div>
+      <div>Min: <span id="min"></span></div>
+      <div>Max: <span id="max"></span></div>
+      <div>Average: <span id="average"></span></div>
+    </fieldset>
+
+  </body>
+  <script src="wsclient.js"></script>
+</html>
