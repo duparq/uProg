@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Split</title>
+    <style>
+      html { height: 100%; }
+
+      body {
+      //height: calc(100% - 16px);
+      box-sizing: border-box;
+      height: 100%;
+      font-family: sans-serif;
+      padding: 0px;
+      margin: 0px;
+      border: 8px solid grey;
+      display: flex;
+      flex-direction: column;
+      }
+
+      #topbar { height: 3em; border: 2px solid red; }
+      #blockly { border: 2px solid green;
+      overflow: auto;
+      height: 100%;
+      min-height: 50%;
+      resize: vertical;
+      }
+      #console { border: 2px solid blue;
+      //display: none;
+      overflow: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="topbar">
+      There is the top bar
+    </div>
+    <div id="blockly">
+      There is Blockly
+    </div>
+    <div id="console">
+      There is the console
+    </div>
+  </body>
+</html>
