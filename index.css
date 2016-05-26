@@ -1,0 +1,52 @@
+
+html {
+    height: 100%;
+}
+
+body {
+    box-sizing: border-box;
+    height: 100%;
+
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+#appname {
+    font-size: 150%;
+    font-weight: bold;
+    padding-left: 10px;
+    padding-right: 20px;
+}
+
+
+#blocklyArea {
+    position: relative;
+    height: 80%;
+    overflow: hidden;
+    min-height: 200px;
+    resize: vertical;
+    z-index: 0;
+    border: 2px solid black;
+    margin: 4px;
+    padding: 4px;
+}
+
+
+#blocklyDiv {
+    position: absolute;
+//    resize: vertical;
+}
+
+#console {
+    background-color: #eee;
+    border: 2px solid black;
+    margin: 4px;
+    padding: 4px;
+    //height: 10em;
+    flex: 1;
+    overflow-y: auto;
+}

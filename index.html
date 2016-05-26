@@ -1,58 +1,73 @@
 <!DOCTYPE html>
-<html class="h100">
+<html>
   <head>
     <meta charset="UTF-8">
     <title>UBlockly</title>
-    <style>
-      body {
-      font-family: sans-serif;
-      margin: 0;
-      }
-
-      #appname {
-      font-size: 150%;
-      font-weight: bold;
-      padding-left: 10px;
-      padding-right: 20px;
-      }
-    </style>
+    <link rel="stylesheet" href="index.css">
     <link rel="stylesheet" href="menubar.css">
-    <link rel="stylesheet" href="flex.css">
   </head>
-  <body class="h100">
-    <div id="layout" class="h100 flex-vbox flex-fill" style="max-height:100%">
+  <body>
 
-      <!-- Menubar inside topbar
-	-->
-      <div id="topbar">
-	<span id="appname">UBlockly</span>
-	<div id="menubar">
-	  <div class="menu">
-	    <span name="file"></span>
-	    <div class="menucontent">
-	      <div name="open"></div>
-	      <div name="save"></div>
-	    </div>
-	  </div>
-	  <div class="menu">
-	    <span name="config"></span>
-	    <div class="menucontent">
-	      <div name="server"></div>
-	      <div name="serial"></div>
-	    </div>
+    <!-- Top bar
+      -->
+    <div id="topbar">
+      <span id="appname">UBlockly</span>
+      <div id="menubar">
+	<div class="menu">
+	  <span name="file"></span>
+	  <div class="menucontent">
+	    <div name="open"></div>
+	    <div name="save"></div>
 	  </div>
 	</div>
-        <select id="uilang"></select>
+	<div class="menu">
+	  <span name="config"></span>
+	  <div class="menucontent">
+	    <div name="server"></div>
+	    <div name="serial"></div>
+	  </div>
+	</div>
       </div>
-      
-      <!-- Console inside flex box
-	-->
-      <div class="content flex-vbox flex-fill">
-	<pre id="console" class="flex-fill">-- Messages --<br></pre>
-      </div>
-
+      <select id="uilang"></select>
     </div>
+
+    <!-- Blockly
+      -->
+    <div id="blocklyArea"></div>
+    <div id="blocklyDiv"></div>
+
+    <!-- <div id="blocklyDiv"></div> -->
+
+    <!-- Console
+      -->
+    <pre id="console">-- Messages --<br></pre>
+
+    <script src="console.js"></script>
+    <script src="menubar.js"></script>
+    <script src="uilang.js"></script>
+
+    <script src="blockly/blockly_compressed.js"></script>
+    <script src="blockly/blocks_compressed.js"></script>
+    <script src="blockly/msg/js/en.js"></script>
+
+    <xml id="toolbox" style="display: none">
+      <category name="controls">
+	<block type="controls_if"></block>
+	<block type="controls_repeat_ext"></block>
+      </category>
+      <category name="artithmetic">
+	<block type="math_number"></block>
+	<block type="math_arithmetic"></block>
+      </category>
+      <category name="others">      
+	<block type="logic_compare"></block>
+	<block type="text"></block>
+	<block type="text_print"></block>
+      </category>
+    </xml>
+
+    <script src="ResizeSensor.js"></script>
+    <script src="index.js"></script>
   </body>
-  <script src="menubar.js"></script>
-  <script src="uilang.js"></script>
+
 </html>

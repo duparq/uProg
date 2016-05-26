@@ -4,6 +4,10 @@
     padding: 4px;
     border-bottom: 1px solid black;
     background-color: #ddd;
+
+    border: 2px solid black;
+    margin: 4px;
+    padding: 4px;
 }
 
 #menubar {
@@ -13,6 +17,7 @@
 .menu {
     position: relative;
     display: inline-block;
+    z-index: 1;
 }
 
 .menu span {
