@@ -9,24 +9,15 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
-/*  Install the blockly workspace
- */
-
 'use strict';
 
-
-/*  Namespace
- */
-var BLY = {};
-BLY.translations = {};
-
+log("Started");
 
 var blocklyArea = document.getElementById('blocklyArea');
 var blocklyDiv = document.getElementById('blocklyDiv');
+var splitter = document.getElementById('splitter');
+var cons = document.getElementById('console');
 
-// var workspace = Blockly.inject(blocklyDiv,
-// 			       {media: '../../media/',
-// 				toolbox: document.getElementById('toolbox')});
 
 var workspace = Blockly.inject('blocklyDiv',
 			       {toolbox: document.getElementById('toolbox'),
@@ -44,36 +35,111 @@ var workspace = Blockly.inject('blocklyDiv',
 				 snap: true},
 				trashcan: false });
 
-/*  Handle blockly area resizes
+var svg = workspace.getParentSvg();
+
+
+splitter.onmousedown = function(e) {
+
+  var prev = document.getElementById('blocklyArea');
+  var next = document.getElementById('console');
+
+  var y0 = e.clientY ;
+  var ph0 = parseInt(window.getComputedStyle(prev).height, 10);
+  var nh0 = parseInt(window.getComputedStyle(next).height, 10);
+
+  log("Body height: "+document.body.offsetHeight);
+
+  log("Splitter mouse down: "+y0+" "+ph0+" "+nh0);
+  splitter.setCapture();
+  e.preventDefault();
+
+  splitter.onmousemove = function(e) {
+    var dy = y0 - e.clientY ;
+    var pmh = parseInt(window.getComputedStyle(prev).minHeight,10) ;
+    var nmh = parseInt(window.getComputedStyle(next).minHeight,10) ;
+
+    /*  Set elements heights
+     */
+    if ( (pmh != pmh || ph0-dy >= pmh) &&
+	 (nmh != nmh || nh0+dy >= nmh) ) {
+      prev.style.height = ph0-dy+'px' ;
+      next.style.height = nh0+dy+'px' ;
+
+      /*  Have the Blockly workspace resized
+       */
+      resize();
+    }
+    e.preventDefault();
+  }
+};
+
+splitter.onmouseup = function(e) {
+  splitter.releaseCapture();
+  splitter.onmousemove = null;
+  e.preventDefault();
+};
+
+
+/*  Show/hide console
+ */
+// blocklyArea.onclick = function() {
+//   var d = window.getComputedStyle(cons).display ;
+//   log("Display: "+d);
+//   if ( d === "none" ) {
+//     splitter.style.display="block";
+//     cons.style.display="block";
+//   }
+//   else {
+//     splitter.style.display="none";
+//     cons.style.display="none";
+//   }
+//   resize();
+// };
+
+
+/*  Adjust the height of the 'blockly' element 
  */
 function resize ( ) {
-  
+  //log("Resize");
+  var dbch = document.body.clientHeight;
+  var bh = parseInt(window.getComputedStyle(blocklyArea).height, 10);
+
+  var cb ;
+  if ( window.getComputedStyle(cons).display !== "none" ) {
+    cb = cons.offsetTop + parseInt(window.getComputedStyle(cons).height, 10);
+  }
+  else {
+    cb = blocklyArea.offsetTop + parseInt(window.getComputedStyle(blocklyArea).height, 10);
+  }
+
+  //log ("  body="+dbch+" ct="+cons.offsetTop+" cb="+(ct+ch)+" bh="+bh);
+  var oh = bh + dbch - cb ; // + document.body.style.borderTopWidth
+  blocklyArea.style.height = oh+'px' ;
+
+  // Position blocklyDiv over blocklyArea.
+  //
   var e = blocklyArea;
-  var x = 2;
-  var y = 2;
+  var x = 0;
+  var y = 0;
   do {
     x += e.offsetLeft;
     y += e.offsetTop;
     e = e.offsetParent;
   } while (e);
 
-  x += blocklyArea.style.borderLeftWidth;
-  y += blocklyArea.style.borderTopWidth;
-  var w = blocklyArea.clientWidth;
-  var h = blocklyArea.clientHeight - 4 ;
-  log("  Blockly area: "+x+" "+y+" "+w+"x"+h);
+  blocklyDiv.style.left = x + 'px';
+  blocklyDiv.style.top = y + 'px';
+  blocklyDiv.style.width = blocklyArea.offsetWidth + 'px';
+  blocklyDiv.style.height = oh + 'px';
+  log("blocklyDiv.style: "+x+" "+y+" "
+      +blocklyArea.offsetWidth+" "+oh);
 
-  // Position blocklyDiv over blocklyArea.
-  //
-  if ( blocklyDiv ) {
-    blocklyDiv.style.left = x + 'px';
-    blocklyDiv.style.top = y + 'px';
-    blocklyDiv.style.width = w + 'px';
-    blocklyDiv.style.height = h + 'px';
-  }
+  /*  Force Blockly workspace to resize
+   *    Taken from blockly/inject.js
+   */
+  svg.setAttribute('height', oh+'px');
+  Blockly.asyncSvgResize(workspace);
 }
 
-new ResizeSensor(blocklyArea, resize);
-window.addEventListener('resize', onresize, false);
-
+window.addEventListener('resize', resize, false);
 resize();

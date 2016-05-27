@@ -14,11 +14,10 @@
  *    Add event handlers
  */
 var opened_menu = null ;
-var menubar = document.getElementById("menubar");
-var menus = menubar.children
+var menus = document.getElementById("menus").children;
 for (i = 0 ; i < menus.length ; i++) {
   /*
-   *  Process all menus of the menubar
+   *  Process all menus
    */
   var menu = menus[i]
   var menu_name = menu.children[0].getAttribute("name")

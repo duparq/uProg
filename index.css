@@ -6,47 +6,36 @@ html {
 body {
     box-sizing: border-box;
     height: 100%;
-
     font-family: sans-serif;
-    margin: 0;
     padding: 0px;
-
-    display: flex;
-    flex-direction: column;
+    margin: 0px;
+    border: 8px solid #fff;
 }
-
-#appname {
-    font-size: 150%;
-    font-weight: bold;
-    padding-left: 10px;
-    padding-right: 20px;
-}
-
 
 #blocklyArea {
-    position: relative;
-    height: 80%;
-    overflow: hidden;
-    min-height: 200px;
-    resize: vertical;
-    z-index: 0;
-    border: 2px solid black;
-    margin: 4px;
-    padding: 4px;
-}
-
-
-#blocklyDiv {
-    position: absolute;
-//    resize: vertical;
+    overflow: auto;
+    height: 50%;
+    min-height: 50px;
 }
 
 #console {
-    background-color: #eee;
-    border: 2px solid black;
-    margin: 4px;
-    padding: 4px;
-    //height: 10em;
-    flex: 1;
-    overflow-y: auto;
+    margin: 0;
+    border: 1px solid #888;
+    padding: 2px;
+    background-color: #ddd;
+    overflow: auto;
+    height: 200px;
+    min-height: 100px;
+    display: block;
+}
+
+#splitter {
+    margin-top: 4px;
+    height: 4px;
+    background-color: #ddd;
+}
+
+#splitter:hover {
+    background-color: #aaa;
+    cursor: row-resize;
 }

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>UBlockly</title>
     <link rel="stylesheet" href="index.css">
-    <link rel="stylesheet" href="menubar.css">
+    <link rel="stylesheet" href="topbar.css">
   </head>
   <body>
 
@@ -12,7 +12,7 @@
       -->
     <div id="topbar">
       <span id="appname">UBlockly</span>
-      <div id="menubar">
+      <div id="menus">
 	<div class="menu">
 	  <span name="file"></span>
 	  <div class="menucontent">
@@ -33,17 +33,17 @@
 
     <!-- Blockly
       -->
-    <div id="blocklyArea"></div>
-    <div id="blocklyDiv"></div>
-
     <!-- <div id="blocklyDiv"></div> -->
+    <div id="blocklyArea"></div>
+    <div id="blocklyDiv" style="position: absolute;"></div>
 
     <!-- Console
       -->
+    <div id="splitter" style="z-index:9999"></div>
     <pre id="console">-- Messages --<br></pre>
 
     <script src="console.js"></script>
-    <script src="menubar.js"></script>
+    <script src="topbar.js"></script>
     <script src="uilang.js"></script>
 
     <script src="blockly/blockly_compressed.js"></script>
@@ -66,7 +66,6 @@
       </category>
     </xml>
 
-    <script src="ResizeSensor.js"></script>
     <script src="index.js"></script>
   </body>
 
