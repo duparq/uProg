@@ -48,3 +48,8 @@
  *  the class list
  */
 .menu div.show { display: block; }
+
+
+.icon:hover {
+    outline: 1px solid black;
+}

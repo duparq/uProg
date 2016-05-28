@@ -18,6 +18,18 @@ body {
     min-height: 50px;
 }
 
+#vsplitter {
+    margin-top: 4px;
+    height: 4px;
+    background-color: #ddd;
+    display: none;
+}
+
+#vsplitter:hover {
+    background-color: #aaa;
+    cursor: row-resize;
+}
+
 #console {
     margin: 0;
     border: 1px solid #888;
@@ -26,16 +38,5 @@ body {
     overflow: auto;
     height: 200px;
     min-height: 100px;
-    display: block;
-}
-
-#splitter {
-    margin-top: 4px;
-    height: 4px;
-    background-color: #ddd;
-}
-
-#splitter:hover {
-    background-color: #aaa;
-    cursor: row-resize;
+    display: none;
 }

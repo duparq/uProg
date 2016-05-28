@@ -11,12 +11,11 @@
 
 'use strict';
 
-log("Started");
+//log("Started");
 
 var blocklyArea = document.getElementById('blocklyArea');
 var blocklyDiv = document.getElementById('blocklyDiv');
-var splitter = document.getElementById('splitter');
-var cons = document.getElementById('console');
+var vsplitter = document.getElementById('vsplitter');
 
 
 var workspace = Blockly.inject('blocklyDiv',
@@ -38,7 +37,7 @@ var workspace = Blockly.inject('blocklyDiv',
 var svg = workspace.getParentSvg();
 
 
-splitter.onmousedown = function(e) {
+vsplitter.onmousedown = function(e) {
 
   var prev = document.getElementById('blocklyArea');
   var next = document.getElementById('console');
@@ -47,13 +46,13 @@ splitter.onmousedown = function(e) {
   var ph0 = parseInt(window.getComputedStyle(prev).height, 10);
   var nh0 = parseInt(window.getComputedStyle(next).height, 10);
 
-  log("Body height: "+document.body.offsetHeight);
+  //log("Body height: "+document.body.offsetHeight);
+  //log("Vsplitter mouse down: "+y0+" "+ph0+" "+nh0);
 
-  log("Splitter mouse down: "+y0+" "+ph0+" "+nh0);
-  splitter.setCapture();
+  vsplitter.setCapture();
   e.preventDefault();
 
-  splitter.onmousemove = function(e) {
+  vsplitter.onmousemove = function(e) {
     var dy = y0 - e.clientY ;
     var pmh = parseInt(window.getComputedStyle(prev).minHeight,10) ;
     var nmh = parseInt(window.getComputedStyle(next).minHeight,10) ;
@@ -73,28 +72,11 @@ splitter.onmousedown = function(e) {
   }
 };
 
-splitter.onmouseup = function(e) {
-  splitter.releaseCapture();
-  splitter.onmousemove = null;
+vsplitter.onmouseup = function(e) {
+  vsplitter.releaseCapture();
+  vsplitter.onmousemove = null;
   e.preventDefault();
 };
-
-
-/*  Show/hide console
- */
-// blocklyArea.onclick = function() {
-//   var d = window.getComputedStyle(cons).display ;
-//   log("Display: "+d);
-//   if ( d === "none" ) {
-//     splitter.style.display="block";
-//     cons.style.display="block";
-//   }
-//   else {
-//     splitter.style.display="none";
-//     cons.style.display="none";
-//   }
-//   resize();
-// };
 
 
 /*  Adjust the height of the 'blockly' element 
@@ -131,8 +113,8 @@ function resize ( ) {
   blocklyDiv.style.top = y + 'px';
   blocklyDiv.style.width = blocklyArea.offsetWidth + 'px';
   blocklyDiv.style.height = oh + 'px';
-  log("blocklyDiv.style: "+x+" "+y+" "
-      +blocklyArea.offsetWidth+" "+oh);
+
+  //log("blocklyDiv.style: "+x+" "+y+" "+blocklyArea.offsetWidth+" "+oh);
 
   /*  Force Blockly workspace to resize
    *    Taken from blockly/inject.js
