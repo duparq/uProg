@@ -13,10 +13,8 @@
 
 //log("Started");
 
-var blocklyArea = document.getElementById('blocklyArea');
 var blocklyDiv = document.getElementById('blocklyDiv');
 var vsplitter = document.getElementById('vsplitter');
-
 
 var workspace = Blockly.inject('blocklyDiv',
 			       {toolbox: document.getElementById('toolbox'),
@@ -34,12 +32,10 @@ var workspace = Blockly.inject('blocklyDiv',
 				 snap: true},
 				trashcan: false });
 
-var svg = workspace.getParentSvg();
-
 
 vsplitter.onmousedown = function(e) {
 
-  var prev = document.getElementById('blocklyArea');
+  var prev = document.getElementById('blocklyDiv');
   var next = document.getElementById('console');
 
   var y0 = e.clientY ;
@@ -79,48 +75,18 @@ vsplitter.onmouseup = function(e) {
 };
 
 
-/*  Adjust the height of the 'blockly' element 
- */
 function resize ( ) {
   //log("Resize");
-  var dbch = document.body.clientHeight;
-  var bh = parseInt(window.getComputedStyle(blocklyArea).height, 10);
 
-  var cb ;
+  var h = document.body.clientHeight - blocklyDiv.offsetTop ;
   if ( window.getComputedStyle(cons).display !== "none" ) {
-    cb = cons.offsetTop + parseInt(window.getComputedStyle(cons).height, 10);
-  }
-  else {
-    cb = blocklyArea.offsetTop + parseInt(window.getComputedStyle(blocklyArea).height, 10);
+    h -= parseInt(window.getComputedStyle(vsplitter).height, 10);
+    h -= parseInt(window.getComputedStyle(cons).height, 10);
   }
 
-  //log ("  body="+dbch+" ct="+cons.offsetTop+" cb="+(ct+ch)+" bh="+bh);
-  var oh = bh + dbch - cb ; // + document.body.style.borderTopWidth
-  blocklyArea.style.height = oh+'px' ;
+  blocklyDiv.style.height = h+'px' ;
 
-  // Position blocklyDiv over blocklyArea.
-  //
-  var e = blocklyArea;
-  var x = 0;
-  var y = 0;
-  do {
-    x += e.offsetLeft;
-    y += e.offsetTop;
-    e = e.offsetParent;
-  } while (e);
-
-  blocklyDiv.style.left = x + 'px';
-  blocklyDiv.style.top = y + 'px';
-  blocklyDiv.style.width = blocklyArea.offsetWidth + 'px';
-  blocklyDiv.style.height = oh + 'px';
-
-  //log("blocklyDiv.style: "+x+" "+y+" "+blocklyArea.offsetWidth+" "+oh);
-
-  /*  Force Blockly workspace to resize
-   *    Taken from blockly/inject.js
-   */
-  svg.setAttribute('height', oh+'px');
-  Blockly.asyncSvgResize(workspace);
+  Blockly.asyncSvgResize(workspace); // Found in blockly/inject.js
 }
 
 window.addEventListener('resize', resize, false);

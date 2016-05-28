@@ -12,9 +12,7 @@ body {
     border: 8px solid #fff;
 }
 
-#blocklyArea {
-    overflow: auto;
-    height: 50%;
+#blocklyDiv {
     min-height: 50px;
 }
 
