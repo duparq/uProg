@@ -15,6 +15,7 @@
 'use strict';
 
 var cons = document.getElementById('console');
+var icon_console = document.getElementById("icon-console");
 
 
 /*  Display and log messages
@@ -32,17 +33,11 @@ function log(msg)
 }
 
 
-/*  Icon
+/*  Show/hide the console
  */
-var icon_console = document.getElementById("icon_console");
 if ( icon_console ) {
-  /*
-   *  Show/hide the console
-   */
   icon_console.onclick = function() {
-    //log("CONSOLE");
     var d = window.getComputedStyle(cons).display ;
-    //log("Display: "+d);
     if ( d === "none" ) {
       vsplitter.style.display="block";
       cons.style.display="block";
@@ -51,8 +46,6 @@ if ( icon_console ) {
       vsplitter.style.display="none";
       cons.style.display="none";
     }
-    resize();
+    App.resize();
   };
-
-  icon_console.title = "Show or hide console";
 }

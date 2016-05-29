@@ -1,11 +1,12 @@
 
-log("Script 'en.js'.")
-
 var TRANSLATIONS = {
-  'menu-file': "File",
-  'menu-file-open': "Open",
-  'menu-file-save': "Save",
-  'menu-config': "Configuration",
-  'menu-config-server': "Server",
-  'menu-config-serial': "Serial port"
+  'icon-console': "Show or hide console",
+  'icon-file-upload': "Add blocks from a file",
+  'icon-file-download': "Save to a file",
+
+  'icon-discard': "Delete all blocks",
+  'discard-confirm': "Do you actually want to discard all the blocks?",
+
+  'yes': "Yes",
+  'no': "No"
 };
