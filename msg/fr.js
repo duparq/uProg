@@ -1,24 +1,22 @@
 
 var TRANSLATIONS = {
   
-  'icon-console': "Affiche ou cache la console",
   'icon-file-upload': "Ajoute des blocs depuis un fichier",
-  'icon-file-download': "Enregistre les blocs dans un fichier",
+  'icon-file-download': "Télécharge les blocs",
 
   'icon-discard': "Efface tous les blocs",
   'discard-confirm': "Voulez-vous vraiment effacer tous les blocs ?",
   
+  'icon-console': "Affiche ou cache la console",
+
   'yes': "Oui",
   'no': "Non",
 
-  /*  Blockly
+  /*  Blockly's toolbox
    */
   'catLogic': "Logique",
   'catLoops': "Boucles",
   'catMath': "Arithmétique",
-  'catText': "Texte",
-  'catLists': "Listes",
-  'catColour': "Couleurs",
   'catVariables': "Variables",
   'catFunctions': "Fonctions"
 };

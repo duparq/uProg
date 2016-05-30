@@ -22,7 +22,7 @@ var icon_filedownload = document.getElementById("icon-file-download");
 var icon_trash = document.getElementById("icon-trash");
 
 var file = {} ;
-file.name = 'noname.xml'
+file.name = 'ublockly.xml'
 
 document.title = file.name ;
 
