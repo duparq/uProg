@@ -418,6 +418,47 @@ function onTrash ( ) {
 // };
 
 
+/*  Show/hide target windox=w
+ */
+function targetIcon_onclick ( ) {
+  var d = window.getComputedStyle(App.targetDiv).display ;
+  if ( d === "none" )
+    App.targetDiv.style.display="block";
+  else
+    App.targetDiv.style.display="none";
+}
+
+
+App.onTargetDivMouseDown = function ( e ) {
+  e.preventDefault();
+  App.targetDiv.setCapture();
+  var ex0 = e.clientX ;
+  var ey0 = e.clientY ;
+  var x0 = parseInt(window.getComputedStyle(App.targetDiv).left);
+  var y0 = parseInt(window.getComputedStyle(App.targetDiv).top);
+  //App.log("App.targetMouseDown"+x0+" "+y0);
+
+  App.targetDiv.onmousemove = function ( e ) {
+    var ex = e.clientX ;
+    var ey = e.clientY ;
+    //App.log("target move: "+ex+" "+ey);
+    App.targetDiv.style.left = (x0 + ex - ex0)+'px';
+    App.targetDiv.style.top = (y0 + ey - y0)+'px';
+    //App.log("  "+App.targetDiv.style.left+" "+App.targetDiv.style.top);
+    e.preventDefault();
+  }
+};
+
+
+App.onTargetDivMouseUp = function ( e ) {
+  //App.log("App.onTargetMouseUp");
+  e.preventDefault();
+  //  document.getElementById(container).style.cursor='default';
+  App.targetDiv.onmousemove = null ;
+  App.targetDiv.releaseCapture();
+};
+
+
 App.init = function() {
 
   App.workspace = null ;
@@ -439,6 +480,14 @@ App.init = function() {
   App.consoleDiv = document.getElementById("consoleDiv");
   App.consoleIcon = document.getElementById("consoleIcon");
   App.consoleIcon.onclick = consoleIcon_onclick ;
+
+  App.targetIcon = document.getElementById("targetIcon");
+  App.targetIcon.onclick = targetIcon_onclick ;
+
+  App.targetDiv = document.getElementById('targetDiv');
+  App.targetDivBar = document.getElementById('targetDivBar');
+  App.targetDivBar.onmousedown = App.onTargetDivMouseDown ;
+  App.targetDivBar.onmouseup = App.onTargetDivMouseUp ;
 
   window.addEventListener('resize', App.layout, false);
   App.layout();

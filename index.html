@@ -18,6 +18,7 @@
       <img id="trashIcon" class="icon disabled" src="icons/trash.svg"></img>
       <img id="consoleIcon" class="icon" src="icons/console.svg"></img>
       <img id="codeIcon" class="icon" src="icons/code.svg"></img>
+      <img id="targetIcon" class="icon" src="icons/target.svg"></img>
 
       <select id="language"></select>
     </div>
@@ -40,6 +41,20 @@
     <div id="consoleSplitter"></div>
     <pre id="consoleDiv">-- Messages --<br></pre>
 
+    <!-- Draggable window for target device
+      -->
+    <div id="targetDiv">
+      <div id="targetDivBar"></div>
+      <div name="content" style="border: 1px solid #ccc; background-color:#eee;">
+	<div style="width:200px; height:100px; margin:10px;">
+	  <select>
+	    <option value="1">first
+	    <option value="2">second
+	  </select>
+	  <input type="text" value="123">
+	</div>
+      </div>
+    </div>
 
     <!-- Modal content
       -->
