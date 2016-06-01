@@ -15,9 +15,9 @@ var TRANSLATIONS = {
 
   /*  Blockly's toolbox
    */
+  'catFunctions': "Fonctions",
+  'catControls': "Contrôles",
   'catLogic': "Logique",
-  'catLoops': "Boucles",
-  'catMath': "Arithmétique",
+  'catMath': "Calculs",
   'catVariables': "Variables",
-  'catFunctions': "Fonctions"
 };
