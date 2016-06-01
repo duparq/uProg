@@ -7,6 +7,7 @@ var TRANSLATIONS = {
   'discard-confirm': "Do you actually want to discard all the blocks?",
 
   'icon-console': "Show or hide console",
+  'codeIcon': "Show or hide the code",
 
   'yes': "Yes",
   'no': "No",

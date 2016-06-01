@@ -21,16 +21,11 @@ var App = {};
 var _ = {};
 
 
-App.console = document.getElementById('console');
-
-var icon_console = document.getElementById("icon-console");
-
-
 /*  Display and log messages
  */
 App.log = function(msg) {
   console.log(msg);
-  var c = document.getElementById("console");
+  var c = App.consoleDiv;
   var x_scroll = c.scrollHeight - c.clientHeight <= c.scrollTop + 1;
 
   c.innerHTML = c.innerHTML.concat(msg+"\r\n");
@@ -40,77 +35,136 @@ App.log = function(msg) {
 };
 
 
-/*  Show/hide the console
+/*  Show/hide the code div
  */
-if ( icon_console ) {
-  icon_console.onclick = function() {
-    var d = window.getComputedStyle(App.console).display ;
-    if ( d === "none" ) {
-      vsplitter.style.display="block";
-      App.console.style.display="block";
-    }
-    else {
-      vsplitter.style.display="none";
-      App.console.style.display="none";
-    }
-    App.resize();
-  };
+function codeIcon_onclick ( )
+{
+  var d = window.getComputedStyle(App.codeDiv).display ;
+  if ( d === "none" ) {
+    App.codeSplitter.style.display="block";
+    App.codeDiv.style.display="block";
+  }
+  else {
+    App.codeSplitter.style.display="none";
+    App.codeDiv.style.display="none";
+  }
+  App.layout();
 }
 
 
+/*  Code splitter
+ */
+function codeSplitter_onmousedown ( e )
+{
+  var prev = App.blocklyDiv;
+  var next = App.codeDiv;
 
-vsplitter.onmousedown = function(e) {
+  var v0 = e.clientX ;
+  var pv0 = parseInt(window.getComputedStyle(prev).width, 10);
+  var nv0 = parseInt(window.getComputedStyle(next).width, 10);
 
-  var prev = document.getElementById('blocklyDiv');
-  var next = document.getElementById('console');
-
-  var y0 = e.clientY ;
-  var ph0 = parseInt(window.getComputedStyle(prev).height, 10);
-  var nh0 = parseInt(window.getComputedStyle(next).height, 10);
-
-  //log("Body height: "+document.body.offsetHeight);
-  //log("Vsplitter mouse down: "+y0+" "+ph0+" "+nh0);
-
-  vsplitter.setCapture();
+  App.codeSplitter.setCapture();
   e.preventDefault();
 
-  vsplitter.onmousemove = function(e) {
-    var dy = y0 - e.clientY ;
-    var pmh = parseInt(window.getComputedStyle(prev).minHeight,10) ;
-    var nmh = parseInt(window.getComputedStyle(next).minHeight,10) ;
-
-    /*  Set elements heights
+  App.codeSplitter.onmousemove = function(e) {
+    /*
+     *  Resize elements
      */
-    if ( (pmh != pmh || ph0-dy >= pmh) &&
-	 (nmh != nmh || nh0+dy >= nmh) ) {
-      prev.style.height = ph0-dy+'px' ;
-      next.style.height = nh0+dy+'px' ;
+    var dv = v0 - e.clientX ;
+    var pmv = parseInt(window.getComputedStyle(prev).minWidth,10) ;
+    var nmv = parseInt(window.getComputedStyle(next).minWidth,10) ;
+
+    if ( (pmv != pmv || pv0-dv >= pmv) &&
+	 (nmv != nmv || nv0+dv >= nmv) ) {
+      prev.style.width = pv0-dv+'px' ;
+      next.style.width = nv0+dv+'px' ;
 
       /*  Have the Blockly workspace resized
        */
-      App.resize();
+      App.layout();
     }
     e.preventDefault();
   }
 };
 
-vsplitter.onmouseup = function(e) {
-  vsplitter.releaseCapture();
-  vsplitter.onmousemove = null;
+function codeSplitter_onmouseup ( e ) {
+  App.codeSplitter.releaseCapture();
+  App.codeSplitter.onmousemove = null;
   e.preventDefault();
 };
 
 
-App.resize = function() {
+/*  Show/hide the console
+ */
+function consoleIcon_onclick ( ) {
+  var d = window.getComputedStyle(App.consoleDiv).display ;
+  if ( d === "none" ) {
+    App.consoleSplitter.style.display="block";
+    App.consoleDiv.style.display="block";
+  }
+  else {
+    App.consoleSplitter.style.display="none";
+    App.consoleDiv.style.display="none";
+  }
+  App.layout();
+}
+
+function consoleSplitter_onmousedown ( e )
+{
+  var prev = App.blocklyDiv;
+  var next = App.consoleDiv;
+
+  var y0 = e.clientY ;
+  var ph0 = parseInt(window.getComputedStyle(prev).height, 10);
+  var nh0 = parseInt(window.getComputedStyle(next).height, 10);
+
+  App.consoleSplitter.setCapture();
+  e.preventDefault();
+
+  App.consoleSplitter.onmousemove = function(e) {
+    var dy = y0 - e.clientY ;
+    var pmh = parseInt(window.getComputedStyle(prev).minHeight,10) ;
+    var nmh = parseInt(window.getComputedStyle(next).minHeight,10) ;
+
+    if ( (pmh != pmh || ph0-dy >= pmh) &&
+	 (nmh != nmh || nh0+dy >= nmh) ) {
+      prev.style.height = ph0-dy+'px' ;
+      next.style.height = nh0+dy+'px' ;
+
+      App.layout();
+    }
+    e.preventDefault();
+  }
+};
+
+
+function consoleSplitter_onmouseup ( e )
+{
+  App.consoleSplitter.releaseCapture();
+  App.consoleSplitter.onmousemove = null;
+  e.preventDefault();
+};
+
+
+App.layout = function() {
   if ( App.workspace ) {
-    //log("Resize");
+    //log("Layout");
+
+    var w = document.body.clientWidth - blocklyDiv.offsetLeft ;
+    if ( window.getComputedStyle(App.codeDiv).display !== "none" ) {
+      w -= parseInt(window.getComputedStyle(App.codeSplitter).width, 10);
+      w -= parseInt(window.getComputedStyle(App.codeDiv).width, 10);
+    }
+    w += 8 ;
+    blocklyDiv.style.width = w+'px' ;
 
     var h = document.body.clientHeight - blocklyDiv.offsetTop ;
-    if ( window.getComputedStyle(App.console).display !== "none" ) {
-      h -= parseInt(window.getComputedStyle(vsplitter).height, 10);
-      h -= parseInt(window.getComputedStyle(App.console).height, 10);
+    if ( window.getComputedStyle(App.consoleDiv).display !== "none" ) {
+      h -= parseInt(window.getComputedStyle(App.consoleSplitter).height, 10);
+      h -= parseInt(window.getComputedStyle(App.consoleDiv).height, 10);
     }
-
+    else
+      h += 6 ;
     blocklyDiv.style.height = h+'px' ;
 
     Blockly.svgResize(App.workspace);
@@ -173,40 +227,39 @@ App.changeLanguage = function() {
 };
 
 
-/*  After a translation script has been loaded, copy the translations, remove
- *  the script from the body and translate the application UI
+/*  A translation script has been loaded
  */
 App.onload1 = function() {
+
+  /*  Copy the translations and remove the script from the body
+   */
   _ = TRANSLATIONS;
   document.body.removeChild(App.script);
 
-  /* Inject language strings into Blockly's toolbox
+  /* Translate Blockly's toolbox
    */
-  //App.log("App.apply");
   var cats = document.getElementById('toolbox').children;
   for ( var i=0, cat ; cat=cats[i] ; i++ ) {
     if ( cat.id ) {
-      //App.log("CAT "+i+": "+cat.id+" -> "+_[cat.id])
       cat.setAttribute('name', _[cat.id]);
     }
   }
 
-  /*  File operations
+  /*  Translate icons
    */
   icon_fileupload.title = _['icon-file-upload'];
   icon_filedownload.title = _['icon-file-download'];
-
-  /*  Delete all
-   */
   icon_trash.title = _['icon-discard'];
+
+  /*  Translate discard-confirm window
+   */
   var dialog = document.getElementById('modal-trash');
   dialog.getElementsByTagName('p')[0].innerHTML = _['discard-confirm'];
   dialog.getElementsByClassName('yes')[0].innerHTML = _['yes'];
   dialog.getElementsByClassName('no')[0].innerHTML = _['no'];
 
-  /*  Console
-   */
-  icon_console.title = _['icon-console'];
+  App.consoleIcon.title = _['consoleIcon'];
+  App.codeIcon.title = _['codeIcon'];
 
   /*  Load Blockly's translations
    */
@@ -221,7 +274,6 @@ App.onload1 = function() {
 /*  Blockly translations loaded: replace the workspace
  */
 App.onload2 = function() {
-  //App.log("App.onload2");
 
   /*  Save the blocks and the undo/redo stacks
    */
@@ -296,7 +348,7 @@ App.onload2 = function() {
     // App.workspace.redoStack_ = redostack;
   }
 
-  App.resize();
+  App.layout();
 
   document.body.removeChild(App.script);
 };
@@ -308,10 +360,23 @@ App.init = function() {
   App.workspace = null ;
   App.dirty = false ;
   App.blocklyDiv = document.getElementById('blocklyDiv');
-  App.vsplitter = document.getElementById('vsplitter');
 
-  window.addEventListener('resize', App.resize, false);
-  App.resize();
+  App.codeSplitter = document.getElementById('codeSplitter');
+  App.codeSplitter.onmousedown = codeSplitter_onmousedown ;
+  App.codeSplitter.onmouseup = codeSplitter_onmouseup ;
+  App.codeDiv = document.getElementById('codeDiv');
+  App.codeIcon = document.getElementById("codeIcon");
+  App.codeIcon.onclick = codeIcon_onclick ;
+
+  App.consoleSplitter = document.getElementById('consoleSplitter');
+  App.consoleSplitter.onmousedown = consoleSplitter_onmousedown ;
+  App.consoleSplitter.onmouseup = consoleSplitter_onmouseup ;
+  App.consoleDiv = document.getElementById("consoleDiv");
+  App.consoleIcon = document.getElementById("consoleIcon");
+  App.consoleIcon.onclick = consoleIcon_onclick ;
+
+  window.addEventListener('resize', App.layout, false);
+  App.layout();
 
   /*
    */

@@ -8,6 +8,7 @@ var TRANSLATIONS = {
   'discard-confirm': "Voulez-vous vraiment effacer tous les blocs ?",
   
   'icon-console': "Affiche ou cache la console",
+  'codeIcon': "Affiche ou cache le code",
 
   'yes': "Oui",
   'no': "Non",

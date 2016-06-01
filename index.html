@@ -10,28 +10,35 @@
 
     <!-- Top bar
       -->
-    <div id="topbar" style="display:flex; align-items:center">
+    <div id="topbar">
       <span id="appname">UBlockly</span>
 
-      <img id="icon-file-upload" class="icon" height="32px" src="icons/file-upload.svg"></img>
-      <img id="icon-file-download" class="icon" height="32px" src="icons/file-download.svg"></img>
-
-      <img id="icon-trash" class="icon disabled" height="32px" src="icons/trash.svg"></img>
-
-      <img id="icon-console" class="icon" height="32px" src="icons/console.svg"></img>
+      <img id="icon-file-upload" class="icon" src="icons/file-upload.svg"></img>
+      <img id="icon-file-download" class="icon" src="icons/file-download.svg"></img>
+      <img id="icon-trash" class="icon disabled" src="icons/trash.svg"></img>
+      <img id="consoleIcon" class="icon" src="icons/console.svg"></img>
+      <img id="codeIcon" class="icon" src="icons/code.svg"></img>
 
       <select id="language"></select>
     </div>
 
-    <!-- Blockly workspace
+    <!-- Code area
       -->
-    <div id="blocklyDiv"></div>
+    <div id="codeArea">
+      <!-- Blockly workspace
+	-->
+      <div id="blocklyDiv"></div>
 
+      <!-- Blockly code output
+	-->
+      <div id="codeSplitter"></div>
+      <div id="codeDiv">-- Output content --</div>
+    </div>
 
     <!-- Console
       -->
-    <div id="vsplitter" style="z-index:9999"></div>
-    <pre id="console">-- Messages --<br></pre>
+    <div id="consoleSplitter"></div>
+    <pre id="consoleDiv">-- Messages --<br></pre>
 
 
     <!-- Modal content

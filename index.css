@@ -12,31 +12,45 @@ body {
     border: 8px solid #fff;
 }
 
+#codeArea {
+    display: flex;
+}
+
 #blocklyDiv {
-    min-height: 50px;
+    min-height: 100px;
+    min-width: 200px;
 }
 
-#vsplitter {
-    margin-top: 4px;
+#codeSplitter {
+    width: 4px;
+}
+
+#codeSplitter:hover {
+    cursor: col-resize;
+    background-color: #aaa;
+}
+
+#codeDiv {
+    min-width: 200px;
+    border: 1px solid #ddd;
+}
+
+#consoleSplitter {
     height: 4px;
-    background-color: #ddd;
-    display: none;
 }
 
-#vsplitter:hover {
+#consoleSplitter:hover {
     background-color: #aaa;
     cursor: row-resize;
 }
 
-#console {
+#consoleDiv {
     margin: 0;
-    border: 1px solid #888;
+    border: 1px solid #ddd;
     padding: 2px;
-    background-color: #ddd;
     overflow: auto;
     height: 200px;
-    min-height: 100px;
-    display: none;
+    min-height: 2em;
 }
 
 #modal {
