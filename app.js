@@ -249,7 +249,7 @@ App.onload1 = function() {
    */
   icon_fileupload.title = _['icon-file-upload'];
   icon_filedownload.title = _['icon-file-download'];
-  icon_trash.title = _['icon-discard'];
+  App.trashIcon.title = _['icon-discard'];
 
   /*  Translate discard-confirm window
    */
@@ -325,19 +325,16 @@ App.onload2 = function() {
   App.workspace = Blockly.inject('blocklyDiv', options);
 
   App.workspace.addChangeListener( function() {
-    var icon = icon_trash || null ;
-    if ( icon ) {
-      var nblocks = App.workspace.getAllBlocks().length;
-      if ( nblocks > 0 ) {
-	icon.classList.remove('disabled');
-	icon.onclick = onTrash ;
-      }
-      else {
-	icon.classList.add('disabled');
-	icon.onclick = null ;
-      }
-    }
+    // App.log("changeListener");
+
     App.dirty = true;
+
+    /*  Limit emission rate of 'changeTimeout' events
+     */
+    if ( App.changeTimeoutId != null )
+      window.clearTimeout(App.changeTimeoutId);
+    if ( codeDiv.style.display !== 'none' )
+      App.changeTimeoutId = window.setTimeout(App.changeTimeout,250);
   });
 
   /*  Restore original blocks and undo/redo stacks
@@ -354,12 +351,80 @@ App.onload2 = function() {
 };
 
 
+App.changeTimeout = function ( ) {
+  //App.log("App.changeTimeout");
+  App.changeTimeoutID = null ;
+
+  var nblocks = App.workspace.getAllBlocks().length;
+  if ( nblocks > 0 ) {
+    App.trashIcon.classList.remove('disabled');
+    App.trashIcon.onclick = onTrash ;
+  }
+  else {
+    App.trashIcon.classList.add('disabled');
+    App.trashIcon.onclick = null ;
+  }
+
+  /*  Generate target code from the blocks.
+   */
+  var code = Blockly.JavaScript.workspaceToCode(App.workspace);
+  //App.log("Code:"+code)
+
+  /*  Prettify if possible
+   */
+  if (typeof prettyPrintOne == 'function') {
+    code = prettyPrintOne(code, 'js');
+    App.codeDiv.innerHTML = code;
+  }
+  else
+    App.codeDiv.textContent = code;
+};
+
+
+function onTrash ( ) {
+  var nblocks = App.workspace.getAllBlocks().length;
+  if ( nblocks ) {
+    if ( App.dirty == false )
+      App.workspace.clear();
+    else {
+      var modal = document.getElementById('modal');
+      modal.onclick = function(e) {
+	modal.style.display = "none";
+	dialog.style.display = "none";
+      }
+      var dialog = document.getElementById('modal-trash');
+      var yes = dialog.getElementsByClassName('yes')[0];
+      yes.onclick = function() {
+	App.workspace.clear();
+      }
+      modal.style.display = "block";
+      dialog.style.display = "block";
+    }
+  }
+}
+
+
+// /**
+//  * Load the Prettify CSS and JavaScript.
+//  */
+// App.importPrettify = function() {
+//   var link = document.createElement('link');
+//   link.setAttribute('rel', 'stylesheet');
+//   link.setAttribute('href', '../prettify.css');
+//   document.head.appendChild(link);
+//   var script = document.createElement('script');
+//   script.setAttribute('src', '../prettify.js');
+//   document.head.appendChild(script);
+// };
+
 
 App.init = function() {
 
   App.workspace = null ;
   App.dirty = false ;
   App.blocklyDiv = document.getElementById('blocklyDiv');
+
+  App.trashIcon = document.getElementById("trashIcon");
 
   App.codeSplitter = document.getElementById('codeSplitter');
   App.codeSplitter.onmousedown = codeSplitter_onmousedown ;

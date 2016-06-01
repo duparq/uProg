@@ -15,7 +15,7 @@
 
       <img id="icon-file-upload" class="icon" src="icons/file-upload.svg"></img>
       <img id="icon-file-download" class="icon" src="icons/file-download.svg"></img>
-      <img id="icon-trash" class="icon disabled" src="icons/trash.svg"></img>
+      <img id="trashIcon" class="icon disabled" src="icons/trash.svg"></img>
       <img id="consoleIcon" class="icon" src="icons/console.svg"></img>
       <img id="codeIcon" class="icon" src="icons/code.svg"></img>
 
@@ -32,7 +32,7 @@
       <!-- Blockly code output
 	-->
       <div id="codeSplitter"></div>
-      <div id="codeDiv">-- Output content --</div>
+      <div id="codeDiv">-- Output content --<br>Flèches : 🠀 🠜🢜🢜🢜 </div>
     </div>
 
     <!-- Console
@@ -92,7 +92,6 @@
 	<block type="logic_operation"></block>
       </category>
       <category id="catMath" colour="230">
-	<block type="math_number"></block>
 	<block type="math_arithmetic">
           <value name="A">
             <shadow type="math_number">
@@ -114,6 +113,9 @@
 	</block>
       </category>
       <category id="catVariables" colour="330" custom="VARIABLE"></category>
+      <category id="catOthers" colour="360">
+      	<block type="math_number"></block>
+      </category>
     </xml>
 
 
@@ -134,9 +136,17 @@
     <script src="blockly/blocks/variables.js"></script>
     <script src="blockly/blocks/procedures.js"></script>
 
-    <script src="blockly/messages.js"></script>
+    <!-- <script src="blockly/messages.js"></script> -->
+    <!-- <script src="blockly/msg/js/en.js"></script> -->
+    <!-- <script src="blockly/msg/js/fr.js"></script> -->
 
-    <!-- <script src="l10n.js"></script> -->
+    
+    <!-- Javascript generator & prettifier
+      -->
+    <link rel="stylesheet" href="blockly/demos/prettify.css">
+    <script src="blockly/demos/prettify.js"></script>
+    <script src="blockly/javascript_compressed.js"></script>
+
     <script src="FileSaver.js"></script>
     <script src="file.js"></script>
     <script src="app.js"></script>

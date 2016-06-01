@@ -104,30 +104,3 @@ if ( icon_filedownload ) {
   //  icon_filedownload.title = l10n.TRANSLATION[icon_filedownload];
   icon_filedownload.title = "Save sketch into a file";
 }
-
-
-function onTrash ( ) {
-  var nblocks = App.workspace.getAllBlocks().length;
-  if ( nblocks && App.dirty == true ) {
-    var modal = document.getElementById('modal');
-    modal.onclick = function(e) {
-      modal.style.display = "none";
-      dialog.style.display = "none";
-    }
-
-    var dialog = document.getElementById('modal-trash');
-
-    var yes = dialog.getElementsByClassName('yes')[0];
-    yes.onclick = function() {
-      App.workspace.clear();
-    }
-
-    modal.style.display = "block";
-    dialog.style.display = "block";
-  }
-}
-
-
-if ( icon_trash ) {
-  icon_trash.onclick = onTrash;
-}

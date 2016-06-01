@@ -33,6 +33,9 @@ body {
 #codeDiv {
     min-width: 200px;
     border: 1px solid #ddd;
+    white-space: pre-wrap;
+    font-family: monospace;
+    font-size: 80%;
 }
 
 #consoleSplitter {
