@@ -16,11 +16,6 @@
 var App = {};
 
 
-/*  Translations
- */
-var _ = {};
-
-
 /*  Display and log messages
  */
 App.log = function(msg) {
@@ -222,58 +217,16 @@ App.changeLanguage = function() {
   App.script  = document.createElement("script");
   App.script.src  = "msg/"+App.language+".js";
   App.script.type = "text/javascript";
-  App.script.onload = App.onload1;
+  //  App.script.onload = App.onload1;
   document.body.appendChild(App.script);
 };
 
 
-/*  A translation script has been loaded
+/*  Replace the workspace for translation.
+ *    NOTE: this is called by the application-loaded translation script.
  */
-App.onload1 = function() {
-
-  /*  Copy the translations and remove the script from the body
-   */
-  _ = TRANSLATIONS;
-  document.body.removeChild(App.script);
-
-  /* Translate Blockly's toolbox
-   */
-  var cats = document.getElementById('toolbox').children;
-  for ( var i=0, cat ; cat=cats[i] ; i++ ) {
-    if ( cat.id ) {
-      cat.setAttribute('name', _[cat.id]);
-    }
-  }
-
-  /*  Translate icons
-   */
-  icon_fileupload.title = _['icon-file-upload'];
-  icon_filedownload.title = _['icon-file-download'];
-  App.trashIcon.title = _['icon-discard'];
-
-  /*  Translate discard-confirm window
-   */
-  var dialog = document.getElementById('modal-trash');
-  dialog.getElementsByTagName('p')[0].innerHTML = _['discard-confirm'];
-  dialog.getElementsByClassName('yes')[0].innerHTML = _['yes'];
-  dialog.getElementsByClassName('no')[0].innerHTML = _['no'];
-
-  App.consoleIcon.title = _['consoleIcon'];
-  App.codeIcon.title = _['codeIcon'];
-
-  /*  Load Blockly's translations
-   */
-  App.script  = document.createElement("script");
-  App.script.src  = "blockly/msg/js/"+App.language+".js";
-  App.script.type = "text/javascript";
-  App.script.onload = App.onload2;
-  document.body.appendChild(App.script);
-};
-
-
-/*  Blockly translations loaded: replace the workspace
- */
-App.onload2 = function() {
+App.translateBlockly = function() {
+  //  App.log("App.onload2");
 
   /*  Save the blocks and the undo/redo stacks
    */
@@ -352,7 +305,7 @@ App.onload2 = function() {
 
 
 App.changeTimeout = function ( ) {
-  //App.log("App.changeTimeout");
+  //  App.log("App.changeTimeout");
   App.changeTimeoutID = null ;
 
   var nblocks = App.workspace.getAllBlocks().length;
@@ -392,7 +345,7 @@ function onTrash ( ) {
 	modal.style.display = "none";
 	dialog.style.display = "none";
       }
-      var dialog = document.getElementById('modal-trash');
+      var dialog = document.getElementById('modal-discard-confirm');
       var yes = dialog.getElementsByClassName('yes')[0];
       yes.onclick = function() {
 	App.workspace.clear();
@@ -463,27 +416,30 @@ App.init = function() {
 
   App.workspace = null ;
   App.dirty = false ;
+
   App.blocklyDiv = document.getElementById('blocklyDiv');
+  App.trashIcon = document.getElementById('trashIcon');
+  App.modalDiscardConfirm = document.getElementById('modal-discard-confirm');
 
-  App.trashIcon = document.getElementById("trashIcon");
+  App.fileUploadIcon = document.getElementById("icon-file-upload");
+  App.fileDownloadIcon = document.getElementById("icon-file-download");
 
+  App.codeIcon = document.getElementById("codeIcon");
+  App.codeIcon.onclick = codeIcon_onclick ;
   App.codeSplitter = document.getElementById('codeSplitter');
   App.codeSplitter.onmousedown = codeSplitter_onmousedown ;
   App.codeSplitter.onmouseup = codeSplitter_onmouseup ;
   App.codeDiv = document.getElementById('codeDiv');
-  App.codeIcon = document.getElementById("codeIcon");
-  App.codeIcon.onclick = codeIcon_onclick ;
 
+  App.consoleIcon = document.getElementById("consoleIcon");
+  App.consoleIcon.onclick = consoleIcon_onclick ;
   App.consoleSplitter = document.getElementById('consoleSplitter');
   App.consoleSplitter.onmousedown = consoleSplitter_onmousedown ;
   App.consoleSplitter.onmouseup = consoleSplitter_onmouseup ;
   App.consoleDiv = document.getElementById("consoleDiv");
-  App.consoleIcon = document.getElementById("consoleIcon");
-  App.consoleIcon.onclick = consoleIcon_onclick ;
 
   App.targetIcon = document.getElementById("targetIcon");
   App.targetIcon.onclick = targetIcon_onclick ;
-
   App.targetDiv = document.getElementById('targetDiv');
   App.targetDivBar = document.getElementById('targetDivBar');
   App.targetDivBar.onmousedown = App.onTargetDivMouseDown ;
@@ -492,8 +448,7 @@ App.init = function() {
   window.addEventListener('resize', App.layout, false);
   App.layout();
 
-  /*
-   */
+  file.init();
   App.setup();
 }
 

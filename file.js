@@ -17,22 +17,18 @@
 
 /*  Icons
  */
-var icon_fileupload = document.getElementById("icon-file-upload");
-var icon_filedownload = document.getElementById("icon-file-download");
-var icon_trash = document.getElementById("icon-trash");
-
 var file = {} ;
+
 file.name = 'ublockly.xml'
 
 document.title = file.name ;
 
+file.init = function ( ) {
 
-/*  File loader: loads an XML file from the users file system and adds the
- *  blocks into the Blockly workspace.
- */
-if ( icon_fileupload ) {
-
-  icon_fileupload.onclick = function() {
+  /*  File loader: loads an XML file from the users file system and adds the
+   *  blocks into the Blockly workspace.
+   */
+  App.fileUploadIcon.onclick = function ( ) {
 
     /*  Handle file input dialog
      */
@@ -52,7 +48,7 @@ if ( icon_fileupload ) {
 	if ( dom === null ) {
           alert('Invalid XML');
 	  App.log('The XML file was not successfully parsed into blocks.' +
-              'Please review the XML code and try again.');
+		  'Please review the XML code and try again.');
 	}
       };
 
@@ -79,17 +75,9 @@ if ( icon_fileupload ) {
       fileinput.addEventListener('change', onFileInput, false);
     }
     fileinput.click();
-
   };
 
-  //  icon_fileupload.title = l10n.TRANSLATION[icon_fileupload];
-  icon_fileupload.title = "Load a file";
-}
-
-
-if ( icon_filedownload ) {
-
-  icon_filedownload.onclick = function() {
+  App.fileDownloadIcon.onclick = function ( ) {
     var xmldom = Blockly.Xml.workspaceToDom(App.workspace);
     var xmltext = Blockly.Xml.domToPrettyText(xmldom);
     var blob = new Blob([xmltext], {type: 'text/plain;charset=utf-8'});
@@ -100,7 +88,4 @@ if ( icon_filedownload ) {
      */
     App.dirty = false ;
   };
-
-  //  icon_filedownload.title = l10n.TRANSLATION[icon_filedownload];
-  icon_filedownload.title = "Save sketch into a file";
-}
+};
