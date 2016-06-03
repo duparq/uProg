@@ -422,8 +422,11 @@ function onTrash ( ) {
  */
 function targetIcon_onclick ( ) {
   var d = window.getComputedStyle(App.targetDiv).display ;
-  if ( d === "none" )
+  if ( d === "none" ) {
+    App.targetDiv.style.left = '400px';
+    App.targetDiv.style.top = '400px';
     App.targetDiv.style.display="block";
+  }
   else
     App.targetDiv.style.display="none";
 }
@@ -436,15 +439,12 @@ App.onTargetDivMouseDown = function ( e ) {
   var ey0 = e.clientY ;
   var x0 = parseInt(window.getComputedStyle(App.targetDiv).left);
   var y0 = parseInt(window.getComputedStyle(App.targetDiv).top);
-  //App.log("App.targetMouseDown"+x0+" "+y0);
 
   App.targetDiv.onmousemove = function ( e ) {
     var ex = e.clientX ;
     var ey = e.clientY ;
-    //App.log("target move: "+ex+" "+ey);
     App.targetDiv.style.left = (x0 + ex - ex0)+'px';
-    App.targetDiv.style.top = (y0 + ey - y0)+'px';
-    //App.log("  "+App.targetDiv.style.left+" "+App.targetDiv.style.top);
+    App.targetDiv.style.top = (y0 + ey - ey0)+'px';
     e.preventDefault();
   }
 };

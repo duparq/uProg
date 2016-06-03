@@ -32,11 +32,11 @@ body {
 }
 
 #codeDiv {
-    min-width: 200px;
+    width: 20%;
+    min-width: 10em;
     border: 1px solid #ddd;
     white-space: pre-wrap;
     font-family: monospace;
-    font-size: 80%;
 }
 
 #consoleSplitter {
@@ -53,11 +53,12 @@ body {
     border: 1px solid #ddd;
     padding: 2px;
     overflow: auto;
-    height: 200px;
+    height: 10em;
     min-height: 2em;
 }
 
 #targetDiv {
+    display: none; /* Hidden by default */
     position: absolute;
     top: 0;
     left: 0;
