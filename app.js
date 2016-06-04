@@ -276,18 +276,7 @@ App.translateBlockly = function() {
   };
   App.workspace = Blockly.inject('blocklyDiv', options);
 
-  App.workspace.addChangeListener( function() {
-    // App.log("changeListener");
-
-    App.dirty = true;
-
-    /*  Limit emission rate of 'changeTimeout' events
-     */
-    if ( App.changeTimeoutId != null )
-      window.clearTimeout(App.changeTimeoutId);
-    if ( codeDiv.style.display !== 'none' )
-      App.changeTimeoutId = window.setTimeout(App.changeTimeout,250);
-  });
+  App.workspace.addChangeListener( App.change );
 
   /*  Restore original blocks and undo/redo stacks
    */
@@ -303,47 +292,49 @@ App.translateBlockly = function() {
 };
 
 
-App.changeTimeout = function ( ) {
+App.change = function ( e ) {
+  App.log('App.change('+e.type+')');
 
-  if ( simulator.interpreter )
-    return;
+  if ( e.type != 'ui' )
+    App.dirty = true ;
 
-  App.log("App.changeTimeout");
-  App.changeTimeoutID = null ;
+  if ( e.type === 'create' ||
+       e.type === 'delete' ||
+       e.type === 'change' ) {
 
-  var nblocks = App.workspace.getAllBlocks().length;
-  if ( nblocks > 0 ) {
-    App.trashIcon.classList.remove('disabled');
-    App.trashIcon.onclick = onTrash ;
-  }
-  else {
-    App.trashIcon.classList.add('disabled');
-    App.trashIcon.onclick = null ;
-  }
-
-  /*  Generate target code from the blocks.
-   */
-  Blockly.JavaScript.STATEMENT_PREFIX = null;
-  var code = Blockly.JavaScript.workspaceToCode(App.workspace);
-  //App.log("Code:"+code)
-
-  if ( App.generatedCode !== code ) {
-    /*
-     *  Generated code changed, need to update window and chenge the simulator
-     */
-    /*  Prettify if possible
-     */
-    if (typeof prettyPrintOne == 'function') {
-      code = prettyPrintOne(code, 'js');
-      App.codeDiv.innerHTML = code;
+    var nblocks = App.workspace.getAllBlocks().length;
+    if ( nblocks > 0 ) {
+      App.trashIcon.classList.remove('disabled');
+      App.trashIcon.onclick = onTrash ;
     }
-    else
-      App.codeDiv.textContent = code;
+    else {
+      App.trashIcon.classList.add('disabled');
+      App.trashIcon.onclick = null ;
+    }
 
-    App.playIcon.classList.remove('disabled');
-    App.pauseIcon.classList.add('disabled');
-    App.stopIcon.classList.add('disabled');
-    App.stepIcon.classList.remove('disabled');
+    /*  Generate target code from the blocks.
+     */
+    Blockly.JavaScript.STATEMENT_PREFIX = null;
+    var code = Blockly.JavaScript.workspaceToCode(App.workspace);
+
+    if ( App.generatedCode !== code ) {
+      /*
+       *  Generated code changed, need to update window and chenge the simulator
+       */
+      /*  Prettify if possible
+       */
+      if (typeof prettyPrintOne == 'function') {
+	code = prettyPrintOne(code, 'js');
+	App.codeDiv.innerHTML = code;
+      }
+      else
+	App.codeDiv.textContent = code;
+
+      App.playIcon.classList.remove('disabled');
+      App.pauseIcon.classList.add('disabled');
+      App.stopIcon.classList.add('disabled');
+      App.stepIcon.classList.remove('disabled');
+    }
   }
 };
 
