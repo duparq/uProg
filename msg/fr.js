@@ -2,12 +2,18 @@
 /*  English translations
  */
 
+/*  Icons
+ */
 App.fileUploadIcon.title = "Charge des blocs depuis un fichier.";
 App.fileDownloadIcon.title = "Télécharge le fichier de ces blocs.";
 App.trashIcon.title = "Supprime tous les blocs.";
 App.consoleIcon.title = "Affiche ou cache la console.";
 App.codeIcon.title = "Affiche ou cache le code produit.";
 App.targetIcon.title = "Affiche ou cache la fenêtre de la cible.";
+App.playIcon.title = "Lance ou reprend la simulation.";
+App.pauseIcon.title = "Suspend la simulation.";
+App.stopIcon.title = "Arrête la simulation.";
+App.stepIcon.title = "Suspend la simulation après l'instruction suivante.";
 
 /*  Blockly's toolbox
  */
@@ -24,6 +30,10 @@ var e = App.modalDiscardConfirm
 e.getElementsByTagName('p')[0].innerHTML = "Voulez-vous vraiment supprimer tous les blocs ?";
 e.getElementsByClassName('yes')[0].innerHTML = "Oui";
 e.getElementsByClassName('no')[0].innerHTML = "Non";
+
+App.MSG.SIMULATOR_READY = "Simulateur prêt.";
+App.MSG.SIMULATOR_STARTED = "Simulateur lancé.";
+App.MSG.SIMULATOR_DONE = "Simulation terminée. ";
 
 /*  Load Blockly's translations
  */

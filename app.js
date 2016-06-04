@@ -11,9 +11,9 @@
 
 'use strict';
 
-/*  Create a namespace for the application.
- */
 var App = {};
+
+App.MSG = {};
 
 
 /*  Display and log messages
@@ -217,7 +217,6 @@ App.changeLanguage = function() {
   App.script  = document.createElement("script");
   App.script.src  = "msg/"+App.language+".js";
   App.script.type = "text/javascript";
-  //  App.script.onload = App.onload1;
   document.body.appendChild(App.script);
 };
 
@@ -226,7 +225,7 @@ App.changeLanguage = function() {
  *    NOTE: this is called by the application-loaded translation script.
  */
 App.translateBlockly = function() {
-  //  App.log("App.onload2");
+  //  App.log("translateBlockly");
 
   /*  Save the blocks and the undo/redo stacks
    */
@@ -305,7 +304,11 @@ App.translateBlockly = function() {
 
 
 App.changeTimeout = function ( ) {
-  //  App.log("App.changeTimeout");
+
+  if ( simulator.interpreter )
+    return;
+
+  App.log("App.changeTimeout");
   App.changeTimeoutID = null ;
 
   var nblocks = App.workspace.getAllBlocks().length;
@@ -320,17 +323,28 @@ App.changeTimeout = function ( ) {
 
   /*  Generate target code from the blocks.
    */
+  Blockly.JavaScript.STATEMENT_PREFIX = null;
   var code = Blockly.JavaScript.workspaceToCode(App.workspace);
   //App.log("Code:"+code)
 
-  /*  Prettify if possible
-   */
-  if (typeof prettyPrintOne == 'function') {
-    code = prettyPrintOne(code, 'js');
-    App.codeDiv.innerHTML = code;
+  if ( App.generatedCode !== code ) {
+    /*
+     *  Generated code changed, need to update window and chenge the simulator
+     */
+    /*  Prettify if possible
+     */
+    if (typeof prettyPrintOne == 'function') {
+      code = prettyPrintOne(code, 'js');
+      App.codeDiv.innerHTML = code;
+    }
+    else
+      App.codeDiv.textContent = code;
+
+    App.playIcon.classList.remove('disabled');
+    App.pauseIcon.classList.add('disabled');
+    App.stopIcon.classList.add('disabled');
+    App.stepIcon.classList.remove('disabled');
   }
-  else
-    App.codeDiv.textContent = code;
 };
 
 
@@ -412,9 +426,27 @@ App.onTargetDivMouseUp = function ( e ) {
 };
 
 
+App.textToWorkspace = function ( text ) {
+  var dom = null;
+  try { dom = Blockly.Xml.textToDom( text ); } catch (e) {}
+  if ( dom ) {
+    try {
+      Blockly.Xml.domToWorkspace(dom, App.workspace);
+    } catch (e) { dom = null; }
+  }
+  if ( dom === null ) {
+    alert('Invalid XML');
+    App.log('The XML file was not successfully parsed into blocks.' +
+	    'Please review the XML code and try again.');
+  }
+  return dom;
+};
+
+
 App.init = function() {
 
   App.workspace = null ;
+  App.simulator = null ;
   App.dirty = false ;
 
   App.blocklyDiv = document.getElementById('blocklyDiv');
@@ -445,6 +477,15 @@ App.init = function() {
   App.targetDivBar.onmousedown = App.onTargetDivMouseDown ;
   App.targetDivBar.onmouseup = App.onTargetDivMouseUp ;
 
+  App.playIcon = document.getElementById("playIcon");
+  App.playIcon.onclick = simulator.play;
+  App.pauseIcon = document.getElementById("pauseIcon");
+  App.pauseIcon.onclick = simulator.pause;
+  App.stopIcon = document.getElementById("stopIcon");
+  App.stopIcon.onclick = simulator.stop;
+  App.stepIcon = document.getElementById("stepIcon");
+  App.stepIcon.onclick = simulator.step;
+
   window.addEventListener('resize', App.layout, false);
   App.layout();
 
@@ -454,3 +495,7 @@ App.init = function() {
 
 
 window.addEventListener('load', App.init);
+
+window.setTimeout(
+  function() { App.textToWorkspace(
+    '<xml xmlns="http://www.w3.org/1999/xhtml"><block type="procedures_defnoreturn" id="i%D5TY649Qc`-(/NJB)c" x="530" y="110"><field name="NAME">faire</field><comment pinned="false" h="80" w="160">Décrire cette procédure…</comment><statement name="STACK"><block type="variables_set" id="x.]T+Efnq:i6Q%GdbR,6"><field name="VAR">compte</field><value name="VALUE"><block type="math_number" id="sz-8*vM_YZaL2sC?Z`}!"><field name="NUM">0</field></block></value><next><block type="controls_whileUntil" id="aD1C.?A;ghnxq3*.v|dC"><field name="MODE">WHILE</field><value name="BOOL"><block type="logic_compare" id="6du)-fmgoYSS/6sz,^mp"><field name="OP">NEQ</field><value name="A"><block type="variables_get" id="es/:#cC?C1E:[mPZ82Y*"><field name="VAR">compte</field></block></value><value name="B"><block type="math_number" id="r.QNpbbF7.UKOP-l2,8d"><field name="NUM">10</field></block></value></block></value><statement name="DO"><block type="variables_set" id=",KAWumeQRl6i8ZuDm|1C"><field name="VAR">compte</field><value name="VALUE"><block type="math_arithmetic" id="hJ;Aedg{k}5_hf51mf`l"><field name="OP">ADD</field><value name="A"><shadow type="math_number" id=",PN`r@V+ann9N5u@|]^o"><field name="NUM">1</field></shadow><block type="variables_get" id="V#VI^.,I-_ndduu(k:t+"><field name="VAR">compte</field></block></value><value name="B"><shadow type="math_number" id="Q6UOiB6,yF1(I]DWwHKf"><field name="NUM">1</field></shadow></value></block></value></block></statement></block></next></block></statement></block><block type="procedures_callnoreturn" id=".L[Z%B6qdIYwO7*44W}3" x="530" y="310"><mutation name="faire"></mutation></block></xml>'); }, 500 );

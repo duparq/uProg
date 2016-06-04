@@ -36,20 +36,8 @@ file.init = function ( ) {
       var reader = new FileReader();
       reader.onload = function() {
 	App.log("file_upload()");
-
-	var dom = null;
-	try { dom = Blockly.Xml.textToDom( reader.result ); } catch (e) {}
-	if ( dom ) {
-	  try {
-	    Blockly.Xml.domToWorkspace(dom, App.workspace);
-	    document.title = file.name ;
-	  } catch (e) { dom = null; }
-	}
-	if ( dom === null ) {
-          alert('Invalid XML');
-	  App.log('The XML file was not successfully parsed into blocks.' +
-		  'Please review the XML code and try again.');
-	}
+	if ( App.textToWorkspace(reader.result) )
+	  document.title = file.name ;
       };
 
       file = e.target.files[0];
