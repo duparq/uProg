@@ -14,26 +14,58 @@
 var simulator = {};
 
 simulator.interpreter = null;
-simulator.x_stepping = false;
-simulator.x_showsteps = false;
-simulator.x_stop = false ;
+simulator.timeoutId = null;
+simulator.x_running = false;
+simulator.x_showsteps = true;
 simulator.x_pause = false ;
 simulator.x_milestone = false ;
-simulator.pauseMS = 1 ;
+
+simulator.speeds = [ 0, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000 ];
+simulator.speed = 8 ; // Integer required
+simulator.pauseMS = simulator.speeds[simulator.speed];
+
+
+/*  Mouse moved the input range
+ */
+simulator.oninput = function ( e ) {
+  simulator.speed = e.target.value;
+  simulator.speedChanged();
+};
+
+simulator.onwheel = function ( e ) {
+  //App.log('OnWheel dx:'+e.deltaX+' dy:'+e.deltaY+' dz:'+e.deltaZ);
+  if ( e.deltaY < 0 && simulator.speed > 0 )
+    simulator.speed-- ;
+  else if ( e.deltaY > 0 && simulator.speed < simulator.speeds.length-1 )
+    simulator.speed++ ;
+  App.speedRange.value = simulator.speed;
+  simulator.speedChanged();
+};
+
+simulator.speedChanged = function ( ) {
+  //App.log('simulator.speedChanged '+simulator.speed);
+  simulator.pauseMS = simulator.speeds[simulator.speed];
+  if ( simulator.speed == 0 ) {
+    App.workspace.highlightBlock(null);
+    simulator.x_showsteps = false;
+  }
+  else
+    simulator.x_showsteps = true;
+};
 
 
 /*  Called when the interpreter encounters a __milestone__ statement
  */
 simulator.milestone = function ( id ) {
   //App.log("simulator.milestone("+id+")");
-//  simulator.stepId = id ;
   simulator.x_milestone = true ;
-  if ( simulator.x_stepping === true || simulator.pauseMS > 0 )
+  if ( simulator.x_showsteps )
     App.workspace.highlightBlock(id);
 };
 
 
 simulator.initApi = function ( interpreter, scope ) {
+
   //App.log("simulator.initApi");
   var i = interpreter ;
 
@@ -62,6 +94,7 @@ simulator.initApi = function ( interpreter, scope ) {
 
 simulator.setupInterpreter = function ( ) {
   App.workspace.traceOn(true);
+  // App.workspace.readOnly = true ; // No effect
   // Generate JavaScript code and parse it.
   Blockly.JavaScript.STATEMENT_PREFIX = '__milestone__(%1);\n';
   Blockly.JavaScript.addReservedWords('__milestone__');
@@ -73,6 +106,12 @@ simulator.setupInterpreter = function ( ) {
 
 
 simulator.play = function ( ) {
+  if ( App.playIcon.classList.contains('disabled') )
+    return ;
+
+  if ( simulator.x_running )
+    return ;
+
   if ( simulator.interpreter === null )
     simulator.setupInterpreter();
 
@@ -81,38 +120,51 @@ simulator.play = function ( ) {
   App.stopIcon.classList.remove('disabled');
   App.stepIcon.classList.add('disabled');
 
-  App.log(App.MSG.SIMULATOR_STARTED);
-  simulator.x_stop = false ;
-  simulator.x_showsteps = false ;
-  simulator.x_stepping = false;
+  App.log(App.MSG.SIMULATOR_STARTED+' ('+simulator.pauseMS+' ms)');
+  simulator.x_running = true ;
   simulator.next();
 };
 
 
 simulator.pause = function ( ) {
-  simulator.x_stepping = true ;
-//  simulator.x_showsteps = true ;
+  if ( App.pauseIcon.classList.contains('disabled') )
+    return ;
+
+  window.clearTimeout(simulator.timeoutId);
+  simulator.timeoutId = null ;
+  simulator.x_running = false ;
+  App.playIcon.classList.remove('disabled');
   App.pauseIcon.classList.add('disabled');
   App.stepIcon.classList.remove('disabled');
 };
 
 
 simulator.stop = function ( ) {
-  simulator.x_stop = true;
-//  App.pauseIcon.classList.add('disabled');
-//  App.stepIcon.classList.remove('disabled');
+  if ( App.stopIcon.classList.contains('disabled') )
+    return ;
+
+  window.clearTimeout(simulator.timeoutId);
+  simulator.interpreter = null ;
+  simulator.x_running = false ;
+  App.workspace.highlightBlock(null);
+  App.playIcon.classList.remove('disabled');
+  App.pauseIcon.classList.add('disabled');
+  App.stopIcon.classList.remove('disabled');
+  App.stepIcon.classList.remove('disabled');
+  App.log(App.MSG.SIMULATOR_DONE);
 };
 
 
 simulator.step = function ( ) {
   //App.log("simulator.step");
-  App.pauseIcon.classList.add('disabled');
-  App.stopIcon.classList.remove('disabled');
+  if ( App.stepIcon.classList.contains('disabled') )
+    return ;
 
   if ( simulator.interpreter === null )
     simulator.setupInterpreter();
 
-  simulator.x_stepping = true;
+  App.stopIcon.classList.remove('disabled');
+  simulator.x_running = false;
   simulator.next();
 };
 
@@ -121,19 +173,13 @@ simulator.step = function ( ) {
  */
 simulator.next = function ( ) {
   //App.log("simulator.next");
-  try {
-    var ok = simulator.interpreter.step();
-  } finally {
-    if (!ok) {
-      simulator.interpreter = null ;
+  if ( simulator.interpreter ) {
+    try {
+      var ok = simulator.interpreter.step();
+    } finally {
+      if (!ok)
+	simulator.interpreter = null ;
     }
-  }
-
-  if ( simulator.x_stop ) {
-    /*
-     *  User wants to abort
-     */
-    simulator.interpreter = null ;
   }
 
   if ( simulator.interpreter === null ) {
@@ -142,26 +188,26 @@ simulator.next = function ( ) {
      */
     App.log(App.MSG.SIMULATOR_DONE);
     App.workspace.highlightBlock(null);
+    // App.workspace.readOnly = false ; // No effect
     App.playIcon.classList.remove('disabled');
     App.pauseIcon.classList.add('disabled');
     App.stopIcon.classList.add('disabled');
     App.stepIcon.classList.remove('disabled');
+    simulator.x_running = false;
     return ;
   }
 
   if ( simulator.x_milestone ) {
     simulator.x_milestone = false ;
-    if ( simulator.x_stepping ) {
-      /*
-       *  Stop execution between milestones if stepping
-       */
+    if ( !simulator.x_running )
       return ;
-    }
-    else if ( simulator.pauseMS > 0 ) {
-      window.setTimeout( function(){simulator.next();}, simulator.pauseMS );
+    else {
+      simulator.timeoutId = window.setTimeout( function(){simulator.next();}, simulator.pauseMS );
       return ;
     }
   }
 
+  /*  Run at maximal speed between milestones
+   */
   simulator.next();
 };

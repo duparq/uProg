@@ -36,6 +36,10 @@
     margin-left: 20px;
 }
 
+#speedRange {
+    width: 100px;
+}
+
 #language {
     margin-left: auto;
 }

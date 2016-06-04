@@ -276,7 +276,7 @@ App.translateBlockly = function() {
   };
   App.workspace = Blockly.inject('blocklyDiv', options);
 
-  App.workspace.addChangeListener( App.change );
+  App.workspace.addChangeListener( App.onChange );
 
   /*  Restore original blocks and undo/redo stacks
    */
@@ -292,49 +292,60 @@ App.translateBlockly = function() {
 };
 
 
-App.change = function ( e ) {
-  App.log('App.change('+e.type+')');
+App.onChange = function ( e ) {
+  App.log('App.onChange('+e.type+')');
 
-  if ( e.type != 'ui' )
+  if ( e.type !== Blockly.Events.UI )
     App.dirty = true ;
 
-  if ( e.type === 'create' ||
-       e.type === 'delete' ||
-       e.type === 'change' ) {
+  if ( e.type === Blockly.Events.CREATE ||
+       e.type === Blockly.Events.DELETE ||
+       e.type === Blockly.Events.MOVE ||
+       e.type === Blockly.Events.CHANGE ) {
 
-    var nblocks = App.workspace.getAllBlocks().length;
-    if ( nblocks > 0 ) {
-      App.trashIcon.classList.remove('disabled');
-      App.trashIcon.onclick = onTrash ;
-    }
-    else {
-      App.trashIcon.classList.add('disabled');
-      App.trashIcon.onclick = null ;
-    }
+    if ( App.moveTimeoutId != null )
+      window.clearTimeout(App.moveTimeoutId);
+    if ( codeDiv.style.display !== 'none' )
+      App.moveTimeoutId = window.setTimeout(App.change,250);
+  }
+};
 
-    /*  Generate target code from the blocks.
+
+App.change = function ( ) {
+  App.log('App.change');
+
+  var nblocks = App.workspace.getAllBlocks().length;
+  if ( nblocks > 0 ) {
+    App.trashIcon.classList.remove('disabled');
+    App.trashIcon.onclick = onTrash ;
+  }
+  else {
+    App.trashIcon.classList.add('disabled');
+    App.trashIcon.onclick = null ;
+  }
+
+  /*  Generate target code from the blocks.
+   */
+  Blockly.JavaScript.STATEMENT_PREFIX = null;
+  var code = Blockly.JavaScript.workspaceToCode(App.workspace);
+
+  if ( App.generatedCode !== code ) {
+    /*
+     *  Generated code changed, need to update window and chenge the simulator
      */
-    Blockly.JavaScript.STATEMENT_PREFIX = null;
-    var code = Blockly.JavaScript.workspaceToCode(App.workspace);
-
-    if ( App.generatedCode !== code ) {
-      /*
-       *  Generated code changed, need to update window and chenge the simulator
-       */
-      /*  Prettify if possible
-       */
-      if (typeof prettyPrintOne == 'function') {
-	code = prettyPrintOne(code, 'js');
-	App.codeDiv.innerHTML = code;
-      }
-      else
-	App.codeDiv.textContent = code;
-
-      App.playIcon.classList.remove('disabled');
-      App.pauseIcon.classList.add('disabled');
-      App.stopIcon.classList.add('disabled');
-      App.stepIcon.classList.remove('disabled');
+    /*  Prettify if possible
+     */
+    if (typeof prettyPrintOne == 'function') {
+      code = prettyPrintOne(code, 'js');
+      App.codeDiv.innerHTML = code;
     }
+    else
+      App.codeDiv.textContent = code;
+
+    App.playIcon.classList.remove('disabled');
+    App.pauseIcon.classList.add('disabled');
+    App.stopIcon.classList.add('disabled');
+    App.stepIcon.classList.remove('disabled');
   }
 };
 
@@ -476,6 +487,10 @@ App.init = function() {
   App.stopIcon.onclick = simulator.stop;
   App.stepIcon = document.getElementById("stepIcon");
   App.stepIcon.onclick = simulator.step;
+  App.speedRange = document.getElementById("speedRange");
+  App.speedRange.oninput = simulator.oninput ;
+  App.speedRange.addEventListener("wheel", simulator.onwheel);
+  App.speedRange.value = simulator.speed ;
 
   window.addEventListener('resize', App.layout, false);
   App.layout();

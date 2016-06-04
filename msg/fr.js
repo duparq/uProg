@@ -14,6 +14,7 @@ App.playIcon.title = "Lance ou reprend la simulation.";
 App.pauseIcon.title = "Suspend la simulation.";
 App.stopIcon.title = "Arrête la simulation.";
 App.stepIcon.title = "Suspend la simulation après l'instruction suivante.";
+App.speedRange.title = "Délai entre deux instructions.";
 
 /*  Blockly's toolbox
  */
