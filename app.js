@@ -292,8 +292,13 @@ App.translateBlockly = function() {
 };
 
 
+/*  Process workspace's 'change' events to update the generated code. 'move'
+ *  events must be processed as they can be fired because of blocs being
+ *  attached or detached. So, we use a timeout to lower the code regeneration
+ *  rate.
+ */
 App.onChange = function ( e ) {
-  App.log('App.onChange('+e.type+')');
+  //App.log('App.onChange('+e.type+')');
 
   if ( e.type !== Blockly.Events.UI )
     App.dirty = true ;
@@ -306,13 +311,13 @@ App.onChange = function ( e ) {
     if ( App.moveTimeoutId != null )
       window.clearTimeout(App.moveTimeoutId);
     if ( codeDiv.style.display !== 'none' )
-      App.moveTimeoutId = window.setTimeout(App.change,250);
+      App.moveTimeoutId = window.setTimeout(App.codeChanged,250);
   }
 };
 
 
-App.change = function ( ) {
-  App.log('App.change');
+App.codeChanged = function ( ) {
+  //App.log('App.change');
 
   var nblocks = App.workspace.getAllBlocks().length;
   if ( nblocks > 0 ) {
@@ -341,13 +346,22 @@ App.change = function ( ) {
     }
     else
       App.codeDiv.textContent = code;
-
-    App.playIcon.classList.remove('disabled');
-    App.pauseIcon.classList.add('disabled');
-    App.stopIcon.classList.add('disabled');
-    App.stepIcon.classList.remove('disabled');
   }
 };
+
+
+// /**
+//  * Load the Prettify CSS and JavaScript.
+//  */
+// App.importPrettify = function() {
+//   var link = document.createElement('link');
+//   link.setAttribute('rel', 'stylesheet');
+//   link.setAttribute('href', '../prettify.css');
+//   document.head.appendChild(link);
+//   var script = document.createElement('script');
+//   script.setAttribute('src', '../prettify.js');
+//   document.head.appendChild(script);
+// };
 
 
 function onTrash ( ) {
@@ -373,61 +387,6 @@ function onTrash ( ) {
 }
 
 
-// /**
-//  * Load the Prettify CSS and JavaScript.
-//  */
-// App.importPrettify = function() {
-//   var link = document.createElement('link');
-//   link.setAttribute('rel', 'stylesheet');
-//   link.setAttribute('href', '../prettify.css');
-//   document.head.appendChild(link);
-//   var script = document.createElement('script');
-//   script.setAttribute('src', '../prettify.js');
-//   document.head.appendChild(script);
-// };
-
-
-/*  Show/hide target windox=w
- */
-function targetIcon_onclick ( ) {
-  var d = window.getComputedStyle(App.targetDiv).display ;
-  if ( d === "none" ) {
-    App.targetDiv.style.left = '400px';
-    App.targetDiv.style.top = '400px';
-    App.targetDiv.style.display="block";
-  }
-  else
-    App.targetDiv.style.display="none";
-}
-
-
-App.onTargetDivMouseDown = function ( e ) {
-  e.preventDefault();
-  App.targetDiv.setCapture();
-  var ex0 = e.clientX ;
-  var ey0 = e.clientY ;
-  var x0 = parseInt(window.getComputedStyle(App.targetDiv).left);
-  var y0 = parseInt(window.getComputedStyle(App.targetDiv).top);
-
-  App.targetDiv.onmousemove = function ( e ) {
-    var ex = e.clientX ;
-    var ey = e.clientY ;
-    App.targetDiv.style.left = (x0 + ex - ex0)+'px';
-    App.targetDiv.style.top = (y0 + ey - ey0)+'px';
-    e.preventDefault();
-  }
-};
-
-
-App.onTargetDivMouseUp = function ( e ) {
-  //App.log("App.onTargetMouseUp");
-  e.preventDefault();
-  //  document.getElementById(container).style.cursor='default';
-  App.targetDiv.onmousemove = null ;
-  App.targetDiv.releaseCapture();
-};
-
-
 App.textToWorkspace = function ( text ) {
   var dom = null;
   try { dom = Blockly.Xml.textToDom( text ); } catch (e) {}
@@ -448,7 +407,6 @@ App.textToWorkspace = function ( text ) {
 App.init = function() {
 
   App.workspace = null ;
-  App.simulator = null ;
   App.dirty = false ;
 
   App.blocklyDiv = document.getElementById('blocklyDiv');
@@ -472,30 +430,15 @@ App.init = function() {
   App.consoleSplitter.onmouseup = consoleSplitter_onmouseup ;
   App.consoleDiv = document.getElementById("consoleDiv");
 
-  App.targetIcon = document.getElementById("targetIcon");
-  App.targetIcon.onclick = targetIcon_onclick ;
-  App.targetDiv = document.getElementById('targetDiv');
-  App.targetDivBar = document.getElementById('targetDivBar');
-  App.targetDivBar.onmousedown = App.onTargetDivMouseDown ;
-  App.targetDivBar.onmouseup = App.onTargetDivMouseUp ;
-
-  App.playIcon = document.getElementById("playIcon");
-  App.playIcon.onclick = simulator.play;
-  App.pauseIcon = document.getElementById("pauseIcon");
-  App.pauseIcon.onclick = simulator.pause;
-  App.stopIcon = document.getElementById("stopIcon");
-  App.stopIcon.onclick = simulator.stop;
-  App.stepIcon = document.getElementById("stepIcon");
-  App.stepIcon.onclick = simulator.step;
-  App.speedRange = document.getElementById("speedRange");
-  App.speedRange.oninput = simulator.oninput ;
-  App.speedRange.addEventListener("wheel", simulator.onwheel);
-  App.speedRange.value = simulator.speed ;
+  App.simulatorIcon = document.getElementById("simulatorIcon");
+  App.simulatorIcon.onclick = simulator.show ;
 
   window.addEventListener('resize', App.layout, false);
   App.layout();
 
+  simulator.setup();
   file.init();
+
   App.setup();
 }
 

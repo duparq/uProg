@@ -5,6 +5,7 @@
     <title>UBlockly</title>
     <link rel="stylesheet" href="index.css">
     <link rel="stylesheet" href="topbar.css">
+    <link rel="stylesheet" href="simulator.css">
   </head>
   <body>
 
@@ -18,13 +19,7 @@
       <img id="trashIcon" class="icon disabled" src="icons/trash.svg"></img>
       <img id="consoleIcon" class="icon" src="icons/console.svg"></img>
       <img id="codeIcon" class="icon" src="icons/code.svg"></img>
-      <img id="targetIcon" class="icon" src="icons/target.svg"></img>
-
-      <img id="playIcon" class="icon" src="icons/play.svg"></img>
-      <img id="pauseIcon" class="icon" src="icons/pause.svg"></img>
-      <img id="stopIcon" class="icon" src="icons/stop.svg"></img>
-      <img id="stepIcon" class="icon" src="icons/step.svg"></img>
-      <input id="speedRange" type="range" min="0" max="10" step="1" value="8">
+      <img id="simulatorIcon" class="icon" src="icons/simulator.svg"></img>
 
       <select id="language"></select>
     </div>
@@ -42,25 +37,36 @@
       <div id="codeDiv"></div>
     </div>
 
+    <!-- Simulator window (modal)
+      -->
+    <div style="display:none; position:fixed; left:0; top:0; width:100%; height:100%; z-index:1;">
+      <div id="simulatorWindow">
+	<div id="simulatorWindowBar"></div>
+	<div id="simulatorIcons">
+	  <img id="simulatorPlayIcon" class="icon" src="icons/play.svg"></img>
+	  <img id="simulatorPauseIcon" class="icon" src="icons/pause.svg"></img>
+	  <img id="simulatorStopIcon" class="icon" src="icons/stop.svg"></img>
+	  <img id="simulatorStepIcon" class="icon" src="icons/step.svg"></img>
+	  <input id="simulatorSpeedRange" type="range" min="0" max="10" step="1" value="8">
+	  <span id="simulatorSpeedSpan">20 ms</span>
+	  <button id="simulatorQuit">Quit</button>
+	</div>
+	<div name="simulatorContent" style="border: 1px solid #ccc; background-color:#eee;">
+	  <div style="width:200px; height:100px; margin:10px;">
+	    <select>
+	      <option value="1">first
+	      <option value="2">second
+	    </select>
+	    <input type="text" value="123">
+	  </div>
+	</div>
+      </div>
+    </div>
+
     <!-- Console
       -->
     <div id="consoleSplitter"></div>
     <pre id="consoleDiv">-- Messages --<br></pre>
-
-    <!-- Draggable window for target device
-      -->
-    <div id="targetDiv">
-      <div id="targetDivBar"></div>
-      <div name="content" style="border: 1px solid #ccc; background-color:#eee;">
-	<div style="width:200px; height:100px; margin:10px;">
-	  <select>
-	    <option value="1">first
-	    <option value="2">second
-	  </select>
-	  <input type="text" value="123">
-	</div>
-      </div>
-    </div>
 
     <!-- Modal content
       -->
@@ -75,16 +81,12 @@
     </div>
 
     <xml id="toolbox" style="display: none">
-      <category id="catFunctions" colour="290" custom="PROCEDURE"></category>
+      <category id="catProcedures" colour="290">
+	<block type="procedures_defnoreturn"></block>
+	<block type="procedures_defreturn"></block>
+      </category>
       <category id="catControls" colour="120">
 	<block type="controls_if"></block>
-	<block type="controls_repeat_ext">
-          <value name="TIMES">
-            <shadow type="math_number">
-              <field name="NUM">10</field>
-            </shadow>
-          </value>
-	</block>
 	<block type="controls_whileUntil"></block>
 	<block type="controls_for">
           <value name="FROM">
@@ -132,12 +134,12 @@
           </value>
 	</block>
       </category>
-      <category id="catVariables" colour="330" custom="VARIABLE"></category>
-      <category id="catOthers" colour="360">
+      <category id="catVariables" colour="330">
+      	<block type="variables_set"></block>
+      	<block type="variables_get"></block>
       	<block type="math_number"></block>
       </category>
     </xml>
-
 
     <!-- See https://developers.google.com/blockly/hacking/building
       -->
