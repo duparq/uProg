@@ -57,6 +57,11 @@ body {
     min-height: 2em;
 }
 
+#consoleDiv span.sim {
+    margin-left: 2em;
+    color: #00f;
+}
+
 #modal {
     display: none;
     position: fixed;

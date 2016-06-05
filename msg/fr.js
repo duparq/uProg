@@ -17,6 +17,7 @@ document.getElementById('catControls').setAttribute('name', 'Contrôles');
 document.getElementById('catLogic').setAttribute('name', 'Logique');
 document.getElementById('catMath').setAttribute('name', 'Opérations');
 document.getElementById('catVariables').setAttribute('name', 'Variables');
+document.getElementById('catIO').setAttribute('name', 'Entrées & sorties');
 
 /*  Translate discard-confirm window
  */
@@ -35,6 +36,7 @@ simulator.stepIcon.title = "Exécute une seule instruction.";
 simulator.speedRange.title = "Délai minimum entre deux instructions.";
 simulator.speedSpan.title = simulator.speedRange.title;
 document.getElementById('simulatorQuit').title = "Ferme le simulateur."
+simulator.windowBar.innerHTML = "Simulateur";
 App.MSG.SIMULATOR_READY = "Prêt pour exécuter.";
 App.MSG.SIMULATOR_STARTED = "Exécution en cours.";
 App.MSG.SIMULATOR_DONE = "Exécution terminée. ";

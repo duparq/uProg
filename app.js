@@ -269,8 +269,8 @@ App.translateBlockly = function() {
       scaleSpeed: 1.2},
     grid: {
       spacing: 20,
-      length: 1,
-      colour: '#aaf',
+      length: 20,
+      colour: '#eef',
       snap: true},
     trashcan: false
   };
@@ -331,7 +331,7 @@ App.codeChanged = function ( ) {
 
   /*  Generate target code from the blocks.
    */
-  Blockly.JavaScript.STATEMENT_PREFIX = null;
+//  Blockly.JavaScript.STATEMENT_PREFIX = null;
   var code = Blockly.JavaScript.workspaceToCode(App.workspace);
 
   if ( App.generatedCode !== code ) {
@@ -405,6 +405,9 @@ App.textToWorkspace = function ( text ) {
 
 
 App.init = function() {
+
+  Blockly.HSV_SATURATION = 0.4 ; //0.45 ;
+  Blockly.HSV_VALUE = 0.7 ; //0.65 ;
 
   App.workspace = null ;
   App.dirty = false ;

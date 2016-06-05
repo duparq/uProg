@@ -48,16 +48,13 @@
 	  <img id="simulatorStopIcon" class="icon" src="icons/stop.svg"></img>
 	  <img id="simulatorStepIcon" class="icon" src="icons/step.svg"></img>
 	  <input id="simulatorSpeedRange" type="range" min="0" max="10" step="1" value="8">
-	  <span id="simulatorSpeedSpan">20 ms</span>
+	  <span id="simulatorSpeedSpan"></span>
 	  <button id="simulatorQuit">Quit</button>
 	</div>
-	<div name="simulatorContent" style="border: 1px solid #ccc; background-color:#eee;">
-	  <div style="width:200px; height:100px; margin:10px;">
-	    <select>
-	      <option value="1">first
-	      <option value="2">second
-	    </select>
-	    <input type="text" value="123">
+	<div id="simulatorContent">
+	  <div id="simulatorVariableDiv">
+	    <span id="simulatorVariableLabel">Inspect</span>
+	    <div id="simulatorVariables"></div>
 	  </div>
 	</div>
       </div>
@@ -139,6 +136,9 @@
       	<block type="variables_get"></block>
       	<block type="math_number"></block>
       </category>
+      <category id="catIO" colour="60">
+	<block type="text_print"></block>
+      </category>
     </xml>
 
     <!-- See https://developers.google.com/blockly/hacking/building
@@ -169,6 +169,7 @@
     <script src="blockly/demos/prettify.js"></script>
     <script src="blockly/javascript_compressed.js"></script>
 
+    <script src="log.js"></script>
     <script src="FileSaver.js"></script>
     <script src="file.js"></script>
 
