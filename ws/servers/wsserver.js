@@ -52,12 +52,14 @@ var ws = new WebSocketServer( { host:host, port:port } );
 
 ws.on('connection', function (ws) {
   console.log("Connected.")
-  
+
   ws.on("message", function (str) {
+    console.log("Message: "+str);
     if ( str==='HRTIME' ) {
       var t = process.hrtime();
       var t = t[0]*1e6 + t[1]*1e-3
       var s = t.toString();
+      console.log("  -> "+s);
       ws.send('HRTIME:'+s)
     }
     else {

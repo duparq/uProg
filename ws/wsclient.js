@@ -28,6 +28,7 @@ function connect ( ) {
   };
 
   ws.onmessage=function(event) {
+    console.log("Message: "+event.data);
     if ( event.data.startsWith('HRTIME:') ) {
       hrtimes.push(event.data.substring(7));
       if ( hrtimes.length < 501 ) {
@@ -70,17 +71,18 @@ window.onload=function() {
   min = document.getElementById("min");
   max = document.getElementById("max");
   average = document.getElementById("average");
-  
+
   connect();
 }
 
 
 function run ( ) {
-  console.log("run");
-  hrtimes = [] ;
   if ( ws === null ) {
     console.log("No server.");
+    check.checked = false;
     return;
   }
+  console.log("run");
+  hrtimes = [] ;
   ws.send('HRTIME');
 }
