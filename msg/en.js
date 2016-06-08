@@ -17,6 +17,7 @@ document.getElementById('catControls').setAttribute('name', 'Controls');
 document.getElementById('catLogic').setAttribute('name', 'Logic');
 document.getElementById('catMath').setAttribute('name', 'Arithmetic');
 document.getElementById('catVariables').setAttribute('name', 'Variables');
+document.getElementById('catIO').setAttribute('name', 'Inputs & outputs');
 
 /*  Translate discard-confirm window
  */
@@ -28,14 +29,13 @@ e.getElementsByClassName('no')[0].innerHTML = "No";
 /*  Debugger
  */
 App.zdebuggerIcon.title = "Open the zdebugger.";
-zdebugger.windowBar.innerHTML = "Debugger";
+zdebugger.windowName.innerHTML = "Debugger";
 zdebugger.playIcon.title = "Start or resume the execution.";
 zdebugger.pauseIcon.title = "Pause the execution.";
 zdebugger.stopIcon.title = "Stop the execution.";
 zdebugger.stepIcon.title = "Execute one statement.";
 zdebugger.speedRange.title = "Minimum delay between two statements.";
 zdebugger.speedSpan.title = zdebugger.speedRange.title;
-document.getElementById('zdebuggerQuit').title = "Close the zdebugger."
 App.MSG.DEBUGGER_READY = "Ready to execute.";
 App.MSG.DEBUGGER_STARTED = "Execution in progress.";
 App.MSG.DEBUGGER_DONE = "Execution complete. ";
