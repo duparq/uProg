@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">
+  <g stroke-width="40" stroke-linecap="round"
+     stroke="red" transform="translate(10 10)" >
+    <line x1="20" y1="20" x2="140" y2="140" />
+    <line x1="20" y1="140" x2="140" y2="20" />
+  </g>
+</svg>

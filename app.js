@@ -15,6 +15,8 @@ var App = {};
 
 App.MSG = {};
 
+App.generatedCode = '' ;
+
 
 /*  Display and log messages
  */
@@ -316,6 +318,8 @@ App.onChange = function ( e ) {
 };
 
 
+/*  Regenerate target code
+ */
 App.codeChanged = function ( ) {
   //App.log('App.change');
 
@@ -335,8 +339,9 @@ App.codeChanged = function ( ) {
   var code = Blockly.JavaScript.workspaceToCode(App.workspace);
 
   if ( App.generatedCode !== code ) {
+    App.generatedCode = code ;
     /*
-     *  Generated code changed, need to update window and chenge the simulator
+     *  Generated code changed, need to update window and reset the debugger
      */
     /*  Prettify if possible
      */
@@ -346,6 +351,7 @@ App.codeChanged = function ( ) {
     }
     else
       App.codeDiv.textContent = code;
+    zdebugger.reset();
   }
 };
 
@@ -433,13 +439,13 @@ App.init = function() {
   App.consoleSplitter.onmouseup = consoleSplitter_onmouseup ;
   App.consoleDiv = document.getElementById("consoleDiv");
 
-  App.simulatorIcon = document.getElementById("simulatorIcon");
-  App.simulatorIcon.onclick = simulator.show ;
+  App.zdebuggerIcon = document.getElementById("zdebuggerIcon");
+  App.zdebuggerIcon.onclick = zdebugger.show ;
 
   window.addEventListener('resize', App.layout, false);
   App.layout();
 
-  simulator.setup();
+  zdebugger.setup();
   file.init();
 
   App.setup();

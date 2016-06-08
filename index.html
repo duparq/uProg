@@ -5,7 +5,7 @@
     <title>UBlockly</title>
     <link rel="stylesheet" href="index.css">
     <link rel="stylesheet" href="topbar.css">
-    <link rel="stylesheet" href="simulator.css">
+    <link rel="stylesheet" href="zdebugger.css">
   </head>
   <body>
 
@@ -19,7 +19,7 @@
       <img id="trashIcon" class="icon disabled" src="icons/trash.svg"></img>
       <img id="consoleIcon" class="icon" src="icons/console.svg"></img>
       <img id="codeIcon" class="icon" src="icons/code.svg"></img>
-      <img id="simulatorIcon" class="icon" src="icons/simulator.svg"></img>
+      <img id="zdebuggerIcon" class="icon" src="icons/zdebugger.svg"></img>
 
       <select id="language"></select>
     </div>
@@ -39,24 +39,23 @@
 
     <!-- Simulator window (modal)
       -->
-    <div style="display:none; position:fixed; left:0; top:0; width:100%; height:100%; z-index:1;">
-      <div id="simulatorWindow">
-	<div id="simulatorWindowBar"></div>
-	<div id="simulatorIcons">
-	  <img id="simulatorPlayIcon" class="icon" src="icons/play.svg"></img>
-	  <img id="simulatorPauseIcon" class="icon" src="icons/pause.svg"></img>
-	  <img id="simulatorStopIcon" class="icon" src="icons/stop.svg"></img>
-	  <img id="simulatorStepIcon" class="icon" src="icons/step.svg"></img>
-	  <input id="simulatorSpeedRange" type="range" min="0" max="10" step="1" value="8">
-	  <span id="simulatorSpeedSpan"></span>
-	  <button id="simulatorQuit">Quit</button>
-	</div>
-	<div id="simulatorContent">
-	  <div id="simulatorVariableDiv">
-	    <span id="simulatorVariableLabel">Inspect</span>
-	    <div id="simulatorVariables"></div>
-	  </div>
-	</div>
+    <div id="zdebuggerWindow">
+      <div id="zdebuggerWindowBar">
+	<span id="zdebuggerWindowName"></span>
+	<img id="zdebuggerWindowClose" src="icons/delete.svg"></img>
+      </div>
+      <div id="zdebuggerIcons">
+	<img id="zdebuggerPlayIcon" class="icon" src="icons/play.svg"></img>
+	<img id="zdebuggerPauseIcon" class="icon" src="icons/pause.svg"></img>
+	<img id="zdebuggerStopIcon" class="icon" src="icons/stop.svg"></img>
+	<img id="zdebuggerStepIcon" class="icon" src="icons/step.svg"></img>
+	<input id="zdebuggerSpeedRange" type="range" min="0" max="10" step="1" value="8">
+	<span id="zdebuggerSpeedSpan"></span>
+	<!-- <button id="zdebuggerQuit">Quit</button> -->
+      </div>
+      <div id="zdebuggerMonitoringDiv">
+	<span id="zdebuggerMonitoringLabel"></span>
+	<div id="zdebuggerMonitors"></div>
       </div>
     </div>
 
@@ -153,8 +152,8 @@
     <script src="blockly/blocks/loops.js"></script>
     <script src="blockly/blocks/math.js"></script>
     <script src="blockly/blocks/text.js"></script>
-    <script src="blockly/blocks/lists.js"></script>
-    <script src="blockly/blocks/colour.js"></script>
+    <!-- <script src="blockly/blocks/lists.js"></script> -->
+    <!-- <script src="blockly/blocks/colour.js"></script> -->
     <script src="blockly/blocks/variables.js"></script>
     <script src="blockly/blocks/procedures.js"></script>
 
@@ -167,14 +166,29 @@
       -->
     <link rel="stylesheet" href="blockly/demos/prettify.css">
     <script src="blockly/demos/prettify.js"></script>
-    <script src="blockly/javascript_compressed.js"></script>
+    <!-- <script src="blockly/javascript_compressed.js"></script> -->
+    <script src="blockly/javascript.js"></script>
+    <script src="blockly/generators/javascript.js"></script>
+    <script src="blockly/generators/javascript/procedures.js"></script>
+    <script src="blockly/generators/javascript/loops.js"></script>
+    <script src="blockly/generators/javascript/logic.js"></script>
+    <script src="blockly/generators/javascript/math.js"></script>
+    <script src="blockly/generators/javascript/variables.js"></script>
+    <!-- <script src="blockly/generators/javascript/.js"></script> -->
+    <!-- <script src="blockly/generators/javascript/.js"></script> -->
+
+    
+    <!-- Overloaded scripts
+      -->
+    <script src="blockly/core/field_dropdown.js"></script>
+    <script src="blockly/core/field_variable.js"></script>
 
     <script src="log.js"></script>
     <script src="FileSaver.js"></script>
     <script src="file.js"></script>
 
     <script src="blockly/demos/interpreter/acorn_interpreter.js"></script>
-    <script src="simulator.js"></script>
+    <script src="zdebugger.js"></script>
 
     <script src="app.js"></script>
   </body>

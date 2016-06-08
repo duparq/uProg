@@ -25,19 +25,22 @@ e.getElementsByTagName('p')[0].innerHTML = "Do you actually want to discard all 
 e.getElementsByClassName('yes')[0].innerHTML = "Yes";
 e.getElementsByClassName('no')[0].innerHTML = "No";
 
-/*  Simulator
+/*  Debugger
  */
-App.simulatorIcon.title = "Open the simulator.";
-simulator.playIcon.title = "Start or resume the execution.";
-simulator.pauseIcon.title = "Pause the execution.";
-simulator.stopIcon.title = "Stop the execution.";
-simulator.stepIcon.title = "Execute one statement.";
-simulator.speedRange.title = "Minimum delay between two statements.";
-simulator.speedSpan.title = simulator.speedRange.title;
-document.getElementById('simulatorQuit').title = "Close the simulator."
-App.MSG.SIMULATOR_READY = "Ready to execute.";
-App.MSG.SIMULATOR_STARTED = "Execution in progress.";
-App.MSG.SIMULATOR_DONE = "Execution complete. ";
+App.zdebuggerIcon.title = "Open the zdebugger.";
+zdebugger.windowBar.innerHTML = "Debugger";
+zdebugger.playIcon.title = "Start or resume the execution.";
+zdebugger.pauseIcon.title = "Pause the execution.";
+zdebugger.stopIcon.title = "Stop the execution.";
+zdebugger.stepIcon.title = "Execute one statement.";
+zdebugger.speedRange.title = "Minimum delay between two statements.";
+zdebugger.speedSpan.title = zdebugger.speedRange.title;
+document.getElementById('zdebuggerQuit').title = "Close the zdebugger."
+App.MSG.DEBUGGER_READY = "Ready to execute.";
+App.MSG.DEBUGGER_STARTED = "Execution in progress.";
+App.MSG.DEBUGGER_DONE = "Execution complete. ";
+Blockly.Msg.MONITOR_VARIABLE = "Monitor" ;
+document.getElementById('zdebuggerMonitoringLabel').innerHTML = "Monitored variables:"
 
 /*  Load Blockly's translations
  */
