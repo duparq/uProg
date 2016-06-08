@@ -33,7 +33,7 @@ body {
 
 #codeDiv {
     width: 20%;
-    min-width: 10em;
+    min-width: 10ch;
     border: 1px solid #ddd;
     white-space: pre-wrap;
     font-family: monospace;
@@ -58,7 +58,7 @@ body {
 }
 
 #consoleDiv span.sim {
-    margin-left: 2em;
+    margin-left: 2ch;
     color: #00f;
 }
 
@@ -79,5 +79,5 @@ body {
     margin: 15% auto; /* 15% from the top and centered */
     padding: 20px;
     box-shadow: 10px 10px 5px 0px #000;
-    width: 25em;
+    width: 30ch;
 }

@@ -38,7 +38,7 @@
 }
 
 #zdebuggerSpeedSpan {
-    width:6em;
+    width:7ch;
 }
 
 #zdebuggerQuit {
@@ -51,8 +51,8 @@
 }
 
 #zdebuggerMonitors {
-    display: flex;
-    flex-wrap: wrap;
+    /* display: flex; */
+    /* flex-wrap: no-wrap; */
     min-height: 2em;
     max-width: 300px;
 }
