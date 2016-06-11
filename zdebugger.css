@@ -22,7 +22,7 @@
 }
 
 #zdebuggerWindowClose {
-    height: 0.9em;
+    height: 1em;
 }
 
 #zdebuggerIcons {
@@ -64,7 +64,7 @@
 
 #zdebuggerMonitors img {
     margin-right: 4px;
-    height: 0.6em;
+    height: 0.8em;
 }
 
 #zdebuggerMonitors img:hover {

@@ -36,17 +36,17 @@ zdebugger.pauseMS = zdebugger.speeds[zdebugger.speed];
  *  ones that provide wrappers for variable monitoring when the zdebugger asks
  *  for code generation.
  */
-Blockly.JavaScript['variables_get'] = function ( block )
-{
-  var key1 = block.getFieldValue('VAR');
-  var key2 = Blockly.JavaScript.variableDB_.getName(key1, Blockly.Variables.NAME_TYPE);
-  if ( zdebugger.x_generate && zdebugger.monitors.hasOwnProperty(key1) )
-    var code = "__get__('"+key1+"')";
-  else
-    var code = key2;
+// Blockly.JavaScript['variables_get'] = function ( block )
+// {
+//   var key1 = block.getFieldValue('VAR');
+//   var key2 = Blockly.JavaScript.variableDB_.getName(key1, Blockly.Variables.NAME_TYPE);
+//   if ( zdebugger.x_generate && zdebugger.monitors.hasOwnProperty(key1) )
+//     var code = "__get__('"+key1+"')";
+//   else
+//     var code = key2;
 
-  return [code, Blockly.JavaScript.ORDER_ATOMIC];
-};
+//   return [code, Blockly.JavaScript.ORDER_ATOMIC];
+// };
 
 Blockly.JavaScript['variables_set'] = function ( block )
 {
@@ -55,15 +55,12 @@ Blockly.JavaScript['variables_set'] = function ( block )
   var value = Blockly.JavaScript.valueToCode(
     block, 'VALUE', Blockly.JavaScript.ORDER_ASSIGNMENT) || '0';
 
-  //App.log('variables_set '+key+' '+value);
+  var code = key2+'='+value+';\n';
   if ( zdebugger.x_generate && zdebugger.monitors.hasOwnProperty(key1) )
-    var code = "__set__('"+key1+"', "+value+");\n";
-  else
-    var code = key2 + ' = ' + value + ';\n';
+    code += "__monitor__('"+key1+"', "+key2+");\n";
 
   return code;
 };
-
 
 /*  Initialize UI elements
  */
@@ -96,7 +93,7 @@ zdebugger.setup = function ( ) {
 
   /*  Reserved words
    */
-  Blockly.JavaScript.addReservedWords('__block__,__get__,__set__');
+  Blockly.JavaScript.addReservedWords('__block__,__get__,__monitor__');
 };
 
 
@@ -105,7 +102,7 @@ zdebugger.setup = function ( ) {
 zdebugger.hasMonitor = function ( key )
 {
   var r = zdebugger.monitors.hasOwnProperty(key);
-  log.dbg('zdebugger.hasMonitor '+key+' '+r);
+  //log.dbg('zdebugger.hasMonitor '+key+' '+r);
   return r ;
 };
 
@@ -115,11 +112,11 @@ zdebugger.hasMonitor = function ( key )
 zdebugger.toggleMonitor = function ( key )
 {
   if ( zdebugger.monitors.hasOwnProperty(key) ) {
-    log.dbg("Monitor delete "+key);
+    //log.dbg("Monitor delete "+key);
     delete zdebugger.monitors[key];
   }
   else {
-    log.dbg("Monitor add "+key);
+    //log.dbg("Monitor add "+key);
     zdebugger.monitors[key]=[];
   }
   zdebugger.updateMonitors();
@@ -129,7 +126,7 @@ zdebugger.toggleMonitor = function ( key )
 
 zdebugger.renameMonitor = function ( key1, key2 )
 {
-  log.dbg('zdebugger.renameMonitor: '+key1+' '+key2);
+  //log.dbg('zdebugger.renameMonitor: '+key1+' '+key2);
   var monitor = zdebugger.monitors[key1];
   if ( monitor ) {
     zdebugger.monitors[key2] = monitor ;
@@ -320,24 +317,24 @@ zdebugger.initApi = function ( interpreter, scope ) {
 
   /*  Variable wrapper: get variable value
    */
-  i.setProperty(
-    scope,
-    '__get__',
-    i.createNativeFunction( function(key) {
-      var value = zdebugger.monitors[key].value;
-      //log.sim("__get__('"+key+"') -> "+value);
-      return value;
-    }));
+  // i.setProperty(
+  //   scope,
+  //   '__get__',
+  //   i.createNativeFunction( function(key) {
+  //     var value = zdebugger.monitors[key].value;
+  //     //log.sim("__get__('"+key+"') -> "+value);
+  //     return value;
+  //   }));
 
   /*  Variable wrapper: set variable value
    */
   i.setProperty(
     scope,
-    '__set__',
+    '__monitor__',
     i.createNativeFunction( function(key,value) {
-      //App.log("__set__('"+key+"', "+value+")");
+      //App.log("__monitor__('"+key+"', "+value+")");
       //log.sim(key+" = "+value);
-      zdebugger.monitors[key].value=value;
+      //zdebugger.monitors[key].value=value;
       zdebugger.monitors[key].span.innerHTML=value;
     }));
 };
@@ -357,8 +354,8 @@ zdebugger.reset = function ( )
   zdebugger.x_generate = true ;
   Blockly.JavaScript.STATEMENT_PREFIX = '__block__(%1);\n';
   zdebugger.code = Blockly.JavaScript.workspaceToCode(App.workspace);
-  Blockly.JavaScript.STATEMENT_PREFIX = null;
-  zdebugger.x_generate = false ;
+//  Blockly.JavaScript.STATEMENT_PREFIX = null;
+//  zdebugger.x_generate = false ;
 
   zdebugger.interpreter = new Interpreter(zdebugger.code, zdebugger.initApi);
   App.workspace.traceOn(true);
