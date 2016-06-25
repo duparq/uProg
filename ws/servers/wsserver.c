@@ -3,19 +3,36 @@
  *  Standalone Websocket server
  *
  *  Borrowed from Andrey Putilov's websocket
+ *
+ *  LANG=C gcc -Wall --std=c11 -Os -s wsserver.c -o wsserver
+ *  LANG=C i686-w64-mingw32-gcc-win32 -Wall --std=c11 -Os -s wsserver.c -lws2_32 -o wsserver.exe
  */
 
 #include <stdlib.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+
+//#define _GNU_SOURCE         /* See feature_test_macros(7) */
+
+#ifdef __WIN32__
+#  include <winsock2.h>
+#  include <sys/timeb.h>
+#  define uint8_t	unsigned char
+#  define uint16_t	unsigned short
+#  define socklen_t	int
+#else
+#  include <sys/socket.h>
+#  include <netinet/in.h>
+#  include <arpa/inet.h>
+#  include <time.h>
+#endif
+
+#include <strings.h>
 #include <unistd.h>
 #include <string.h>
 #include <stdio.h>
 #include <ctype.h>
 
 
-#define PORT		8080
+#define PORT		39000
 #define BUF_LEN		0xFFFF
 #define PACKET_DUMP
 
@@ -79,10 +96,10 @@ static void die ( const char *msg )
 }
 
 
-static void s2h ( const uint8_t *msg, size_t max )
+static void s2h ( const uint8_t *msg, size_t n )
 {
-  for ( ; *msg && max>0 ; max--, msg++ )
-    printf("%02x", *msg);
+  for ( int i=0 ; i<n ; i++ )
+    printf("%02x", *msg++);
 }
 
 
@@ -253,11 +270,13 @@ static char* getUptoLinefeed(const char *startFrom)
 }
 
 
-enum wsFrameType wsParseHandshake(const uint8_t *inputFrame, size_t inputLength,
-                                  struct handshake *hs)
+enum wsFrameType wsParseHandshake ( const uint8_t *inputFrame, size_t inputLength,
+				    struct handshake *hs )
 {
   const char *inputPtr = (const char *)inputFrame;
   const char *endPtr = (const char *)inputFrame + inputLength;
+
+  printf("wsParseHandshake:\n%*s---\n", (int)inputLength, inputFrame);
 
   if (!strstr((const char *)inputFrame, "\r\n\r\n"))
     return WS_INCOMPLETE_FRAME;
@@ -346,13 +365,13 @@ enum wsFrameType wsParseHandshake(const uint8_t *inputFrame, size_t inputLength,
     } else {
     hs->frameType = WS_OPENING_FRAME;
   }
-    
+
   return hs->frameType;
 }
 
 
-void wsGetHandshakeAnswer(const struct handshake *hs, uint8_t *outFrame, 
-                          size_t *outLength)
+void wsGetHandshakeAnswer ( const struct handshake *hs, uint8_t *outFrame, 
+			    size_t *outLength )
 {
   char *responseKey = NULL;
   uint8_t length = strlen(hs->key)+strlen(secret);
@@ -379,6 +398,8 @@ void wsGetHandshakeAnswer(const struct handshake *hs, uint8_t *outFrame,
   free(responseKey);
   // if assert fail, that means, that we corrupt memory
   *outLength = written;
+
+  printf("wsGetHandshakeAnswer:\n%*s---\n", written, outFrame);
 }
 
 void wsMakeFrame(const uint8_t *data, size_t dataLength,
@@ -496,9 +517,9 @@ static int safeSend ( int clientSocket, const uint8_t *buffer, size_t bufferSize
   //  printf("out packet:\n");
   //  fwrite(buffer, bufferSize, 1, stdout);
 
-  printf("OUT %d bytes (", (int)bufferSize);
-  s2h(buffer,bufferSize);
-  printf("): %*s\n", (int)bufferSize, buffer);
+  /* printf("OUT %d bytes (", (int)bufferSize); */
+  /* s2h(buffer,bufferSize); */
+  /* printf("): %*s\n", (int)bufferSize, buffer); */
 #endif
 
   ssize_t written = send(clientSocket, buffer, bufferSize, 0);
@@ -589,7 +610,8 @@ void clientWorker(int clientSocket)
       if (frameType == WS_OPENING_FRAME) {
 	printf("frameType == WS_OPENING_FRAME\n");
 	// if resource is right, generate answer handshake and send it
-	if (strcmp(hs.resource, "/echo") != 0) {
+	/* if (strcmp(hs.resource, "/echo") != 0) { */
+	if (strcmp(hs.resource, "/") != 0) {
 	  frameSize = sprintf((char *)gBuffer, "HTTP/1.1 404 Not Found\r\n\r\n");
 	  safeSend(clientSocket, gBuffer, frameSize);
 	  break;

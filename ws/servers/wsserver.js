@@ -4,7 +4,7 @@
 /*  Get the IP address of the host
  */
 var host = "127.0.0.1" ;
-var port = "8080" ;
+var port = "39000" ;
 
 function host_ip()
 {
