@@ -31,7 +31,7 @@ Blockly.Blocks['variables_set'] = {
         },
 	{
 	  "type": "field_image",
-	  "src": "file:///home/indy/dev/ublockly/icons/variable_set.svg",
+	  "src": "icons/variable_set.svg",
 	  "width": 20,
 	  "height": 15,
 	  "alt": "<--"
