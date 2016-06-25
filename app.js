@@ -60,8 +60,9 @@ function codeSplitter_onmousedown ( e )
   var pv0 = parseInt(window.getComputedStyle(prev).width, 10);
   var nv0 = parseInt(window.getComputedStyle(next).width, 10);
 
-  App.codeSplitter.setCapture();
-  e.preventDefault();
+  // App.codeSplitter.setCapture();
+  // e.preventDefault();
+  App.setCapture( App.codeSplitter );
 
   App.codeSplitter.onmousemove = function(e) {
     /*
@@ -80,14 +81,15 @@ function codeSplitter_onmousedown ( e )
        */
       App.layout();
     }
-    e.preventDefault();
+    // e.preventDefault();
   }
 };
 
 function codeSplitter_onmouseup ( e ) {
-  App.codeSplitter.releaseCapture();
+  // App.codeSplitter.releaseCapture();
   App.codeSplitter.onmousemove = null;
-  e.preventDefault();
+  // e.preventDefault();
+  App.setCapture( null );
 };
 
 
@@ -108,15 +110,17 @@ function consoleIcon_onclick ( ) {
 
 function consoleSplitter_onmousedown ( e )
 {
-  var prev = App.blocklyDiv;
+  //var prev = App.blocklyDiv;
+  var prev = App.codeArea;
   var next = App.consoleDiv;
 
   var y0 = e.clientY ;
   var ph0 = parseInt(window.getComputedStyle(prev).height, 10);
   var nh0 = parseInt(window.getComputedStyle(next).height, 10);
 
-  App.consoleSplitter.setCapture();
-  e.preventDefault();
+  // App.consoleSplitter.setCapture();
+  // e.preventDefault();
+  App.setCapture( App.consoleSplitter );
 
   App.consoleSplitter.onmousemove = function(e) {
     var dy = y0 - e.clientY ;
@@ -130,16 +134,17 @@ function consoleSplitter_onmousedown ( e )
 
       App.layout();
     }
-    e.preventDefault();
+    // e.preventDefault();
   }
 };
 
 
 function consoleSplitter_onmouseup ( e )
 {
-  App.consoleSplitter.releaseCapture();
+  App.setCapture( null );
+  // App.consoleSplitter.releaseCapture();
   App.consoleSplitter.onmousemove = null;
-  e.preventDefault();
+  // e.preventDefault();
 };
 
 
@@ -228,6 +233,13 @@ App.changeLanguage = function() {
  */
 App.translateBlockly = function() {
   //  App.log("translateBlockly");
+
+
+  /*  Translate UBlockly's blocks
+   */
+  Blockly.Msg.PROCEDURES_BEFORE_PARAMS = ", selon :";
+  Blockly.Msg.PROCEDURES_CALL_BEFORE_PARAMS = ", selon :";
+  Blockly.Msg.PROCEDURES_CREATE_DO = "Créer un bloc «%1»";
 
   /*  Save the blocks and the undo/redo stacks
    */
@@ -370,7 +382,8 @@ App.codeChanged = function ( ) {
 // };
 
 
-function onTrash ( ) {
+function onTrash ( )
+{
   var nblocks = App.workspace.getAllBlocks().length;
   if ( nblocks ) {
     if ( App.dirty == false )
@@ -393,7 +406,8 @@ function onTrash ( ) {
 }
 
 
-App.textToWorkspace = function ( text ) {
+App.textToWorkspace = function ( text )
+{
   var dom = null;
   try { dom = Blockly.Xml.textToDom( text ); } catch (e) {}
   if ( dom ) {
@@ -410,14 +424,52 @@ App.textToWorkspace = function ( text ) {
 };
 
 
-App.init = function() {
+/*  Set mouse capture management (Chrome does not implement setCapture)
+ */
+App.setupCapture = function ( )
+{
+  App.captureTarget = null ;
 
+  var mousemove = function ( e ) {
+    if ( App.captureTarget !== null ) {
+      //log.dbg('mousemove');
+      e.preventDefault();
+      e.stopPropagation();
+      App.captureTarget.onmousemove(e);
+    }
+  };
+
+  var mouseup = function ( e ) {
+    if ( App.captureTarget !== null ) {
+      //log.dbg('mouseup');
+      e.preventDefault();
+      e.stopPropagation();
+      App.captureTarget.onmouseup(e);
+    }
+  };
+
+  document.addEventListener('mousemove', mousemove );
+  document.addEventListener('mouseup', mouseup );
+}
+
+
+App.setCapture = function ( target )
+{
+  App.captureTarget = target ;
+}
+
+
+/*    M a i n
+ */
+App.init = function()
+{
   Blockly.HSV_SATURATION = 0.4 ; //0.45 ;
   Blockly.HSV_VALUE = 0.7 ; //0.65 ;
 
   App.workspace = null ;
   App.dirty = false ;
 
+  App.codeArea = document.getElementById('codeArea');
   App.blocklyDiv = document.getElementById('blocklyDiv');
   App.trashIcon = document.getElementById('trashIcon');
   App.modalDiscardConfirm = document.getElementById('modal-discard-confirm');
@@ -447,6 +499,8 @@ App.init = function() {
 
   zdebugger.setup();
   file.init();
+
+  App.setupCapture();
 
   App.setup();
 }

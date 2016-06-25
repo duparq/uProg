@@ -36,9 +36,10 @@ zdebugger.stopIcon.title = "Arrête l'exécution.";
 zdebugger.stepIcon.title = "Exécute une seule instruction.";
 zdebugger.speedRange.title = "Délai minimum entre deux instructions.";
 zdebugger.speedSpan.title = zdebugger.speedRange.title;
-App.MSG.DEBUGGER_READY = "Prêt pour exécuter.";
-App.MSG.DEBUGGER_STARTED = "Exécution en cours.";
-App.MSG.DEBUGGER_DONE = "Exécution terminée. ";
+App.Msg = App.Msg || {};
+App.Msg.DEBUGGER_READY = "Prêt pour exécuter.";
+App.Msg.DEBUGGER_STARTED = "Exécution en cours.";
+App.Msg.DEBUGGER_DONE = "Exécution terminée. ";
 Blockly.Msg.MONITOR_VARIABLE = "Surveiller" ;
 document.getElementById('zdebuggerMonitoringLabel').innerHTML = "Variables surveillées :"
 

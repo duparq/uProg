@@ -35,8 +35,10 @@ body {
     width: 20%;
     min-width: 10ch;
     border: 1px solid #ddd;
+    padding: 4px;
     white-space: pre-wrap;
     font-family: monospace;
+    overflow: auto;
 }
 
 #consoleSplitter {

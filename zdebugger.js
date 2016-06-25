@@ -214,7 +214,8 @@ zdebugger.onTargetDivMouseDown = function ( e )
 {
   //App.log('App.onTargetDivMouseDown');
   e.preventDefault();
-  zdebugger.windowBar.setCapture();
+  //  zdebugger.windowBar.setCapture();
+  App.setCapture(zdebugger.windowBar);
   var ex0 = e.clientX ;
   var ey0 = e.clientY ;
   var x0 = parseInt(window.getComputedStyle(zdebugger.window).left);
@@ -257,7 +258,8 @@ zdebugger.onTargetDivMouseUp = function ( e )
   e.preventDefault();
   //  document.getElementById(container).style.cursor='default';
   zdebugger.windowBar.onmousemove = null ;
-  zdebugger.windowBar.releaseCapture();
+  //zdebugger.windowBar.releaseCapture();
+  App.setCapture(null);
 };
 
 

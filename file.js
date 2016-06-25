@@ -36,8 +36,10 @@ file.init = function ( ) {
       var reader = new FileReader();
       reader.onload = function() {
 	App.log("file_upload()");
-	if ( App.textToWorkspace(reader.result) )
+	if ( App.textToWorkspace(reader.result) ) {
 	  document.title = file.name ;
+	  App.dirty = false ;
+	}
       };
 
       file = e.target.files[0];
