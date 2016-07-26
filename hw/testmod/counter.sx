@@ -1,0 +1,101 @@
+
+	;; -*- asm -*-
+	;; 
+	;; Note: gcc call-used registers: 18..27, 30, 31
+
+#include "config_counter.h"
+#include "xinstr.sx"
+#include BOARD_H
+
+;; #if defined PIN_DBG
+;; 	DBG       = 1
+;; 	DBGPIN    = hw_ra(hw_rel(PIN_DBG,port), pin)
+;; 	DBGBIT    = hw_bp(PIN_DBG)
+;; #  define DBG_AP	DBGPIN, DBGBIT
+;; #endif
+
+	COUNT	= hw_ra(COUNTER, count)
+
+	.global	countx
+	.global xtick
+
+	.section .bss
+countx:	.byte	0
+	.byte	0
+
+
+	.section .text
+
+	;; Counter overflow: increment countx
+	;;   Interrupts are disabled for 5 cycles
+	;;   To make the code faster, countx is not updated atomically.
+	;;   If another ISR uses countx, it should be disabled while this ISR is writing it.
+	;;
+	.global HW_ISR(COUNTER, overflow)
+HW_ISR(COUNTER, overflow):
+				; [4]	Call
+	sei			; [1]
+
+	;;  Save context
+	;;
+	push	r24		; [2]
+	in	r24, SREG	; [1]
+	push	r24		; [2]
+	push	r25		; [2]=7
+
+	;;  Increment count extension
+	;;
+	lds	r24, countx+0	; [2]
+	lds	r25, countx+1	; [2]
+	adiw	r24, 1		; [2]
+	sts	countx+0, r24	; [2]
+	sts	countx+1, r25	; [2]=10
+
+	;;  Signal overflow
+	;;
+	;; XSB	R24, X_TOVF_AP
+
+;; #if defined DBG_AP
+;; 	XSB	R24, DBG_AP
+;; #endif
+
+	;; Restore context
+	;;
+	pop	r25		; [2]
+	pop	r24		; [2]
+	out	SREG, r24	; [1]
+	pop	r24		; [2]=7
+
+	reti			; [4]
+
+
+	;; Return 32-bit value of count in R25:R22 (R25=0)
+	;;   Interrupts are not disabled.
+	;;   If the counter overflow ISR is launched while we're reading countx,
+	;;   the two readings of countx will not match. Then, we read all again.
+	;;
+	.global get_count32
+	.section .text.get_count32,"ax",@progbits
+get_count32:
+1:	lds	r23, countx+0
+	lds	r24, countx+1
+	XLD	r22, COUNT
+	lds	r25, countx+0
+	cp	r23, r25	;  Modified while we were reading it?
+	brne	1b
+	;; lds	r25, countx+1
+	;; cp	r24, r25	;  Modified while we were reading it?
+	;; brne	1b
+	ldi	r25, 0
+	ret
+
+
+	.global get_countx
+	.section .text.get_countx,"ax",@progbits
+get_countx:
+1:	lds	r24, countx+0
+	lds	r25, countx+1
+	lds	r26, countx+0
+	cp	R24, R26
+	brne	1b
+	ret

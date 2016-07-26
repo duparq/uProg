@@ -1,0 +1,55 @@
+<?xml-stylesheet type="text/css" href="hw.css" ?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-1 0 28 36">
+  <g class="device">
+    <g id="package" class="device">
+      <rect class="_pin" x="0" y="4" width="2" height="4" />
+      <rect class="_pin" x="0" y="12" width="2" height="4" />
+      <rect class="_pin" x="0" y="20" width="2" height="4" />
+      <rect class="_pin" x="0" y="28" width="2" height="4" />
+
+      <rect class="_pin" x="24" y="28" width="2" height="4" />
+      <rect class="_pin" x="24" y="20" width="2" height="4" />
+      <rect class="_pin" x="24" y="12" width="2" height="4" />
+      <rect class="_pin" x="24" y="4" width="2" height="4" />
+
+      <rect class="package" x="2" y="1" width="22" height="34" rx=".5" ry=".5" />
+      <circle class="notch" cx="4" cy="3" r="1" />
+    </g>
+
+    <text class="devName" x="12" y="18" transform="rotate(90 12 18)">
+      ATtiny85
+    </text>
+
+    <text class="pinName" x="3" y="7">RESET</text>
+
+    <text class="pinName" x="3" y="15">RX/TX</text>
+
+    <g class="pin" id="3">
+      <text x="3" y="23">3</text>
+      <rect x="0" y="20" width="1" height="4" />
+      <rect class="pad" x="-1" y="19" width="8" height="6" />
+    </g>
+
+    <text class="pinName" x="3" y="31">GND</text>
+
+    <g class="pin right" id="5">
+      <text x="23" y="31">5</text>
+      <rect x="25" y="28" width="1" height="4" />
+      <rect class="pad" x="19" y="27" width="8" height="6" />
+    </g>
+
+    <g class="pin right" id="6">
+      <text x="23" y="23">6</text>
+      <rect x="25" y="20" width="1" height="4" />
+      <rect class="pad" x="19" y="19" width="8" height="6" />
+    </g>
+
+    <g class="pin right" id="7">
+      <text x="23" y="15">7</text>
+      <rect x="25" y="12" width="1" height="4" />
+      <rect class="pad" x="19" y="11" width="8" height="6" />
+    </g>
+
+    <text class="pinName right" x="23" y="7">VCC</text>
+  </g>
+</svg>

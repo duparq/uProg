@@ -15,6 +15,7 @@
 
 .icon {
     height: 28px;
+    cursor: pointer;
 }
 
 .icon:hover {

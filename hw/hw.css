@@ -1,0 +1,81 @@
+
+#hw {
+    z-index: 2;
+}
+
+#hw .content.visible {
+    display: block;
+}
+
+#hwIcon {
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+
+/*
+ *  Device 
+ */
+.device {
+    cursor: default;
+    font-family: sans-serif;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 0;
+    stroke: #000;
+}
+
+.device > .package {
+    stroke-width: 0.5;
+    stroke: #111;
+    fill: #111;
+}
+
+.device > .devName {
+    text-anchor: middle;
+    font-size: 5px;
+    fill: #333;
+}
+
+.device > .pinName {
+    font-size: 2px;
+    fill: #888;
+}
+
+.device > .right {
+    text-anchor: end;
+}
+
+.device > .notch {
+    stroke-width: 0;
+    fill: #444;
+}
+
+.device > ._pin {
+    stroke-width: 0;
+    fill: #aaa;
+}
+
+.device > g.pin {
+    font-size:3px;
+    cursor: pointer;
+}
+
+.device > g > * {
+    fill:#aaa;
+}
+
+.device > g.on > * {
+    fill:#f44;
+}
+
+.device > g.off > * {
+    fill:#44f;
+}
+
+.device > g > .pad {
+    stroke: #888;
+    stroke-width:0.1;
+    stroke-dasharray:.1, .5;
+    fill-opacity:0;
+}

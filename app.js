@@ -1,6 +1,6 @@
 
 /* Copyright (c) 2016 Christophe Duparquet.
- * http://github.com/duparq/ublockly
+ * http://github.com/duparq/uprog
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
@@ -14,7 +14,6 @@
 var App = {};
 
 App.MSG = {};
-
 App.generatedCode = '' ;
 
 
@@ -221,6 +220,24 @@ App.setup = function() {
  */
 App.changeLanguage = function() {
   App.language = App.languages[App.langMenu.selectedIndex][1];
+  App.i18n();
+};
+
+
+App.i18n = function ( )
+{
+  if ( App.language === 'fr' ) {
+    document.getElementById("icon-file-upload").title = "Charge des blocs depuis un fichier.";
+    document.getElementById("icon-file-download").title = "Télécharge le fichier de ces blocs.";
+  }
+  else {
+    document.getElementById("icon-file-upload").title = "Upload a file to add blocks.";
+    document.getElementById("icon-file-download").title = "Download.";
+  }
+
+  cpu.i18n();
+  memory.i18n();
+  hw.i18n();
   App.script  = document.createElement("script");
   App.script.src  = "msg/"+App.language+".js";
   App.script.type = "text/javascript";
@@ -235,7 +252,7 @@ App.translateBlockly = function() {
   //  App.log("translateBlockly");
 
 
-  /*  Translate UBlockly's blocks
+  /*  Translate uProg's blocks
    */
   Blockly.Msg.PROCEDURES_BEFORE_PARAMS = ", selon :";
   Blockly.Msg.PROCEDURES_CALL_BEFORE_PARAMS = ", selon :";
@@ -289,7 +306,6 @@ App.translateBlockly = function() {
     trashcan: false
   };
   App.workspace = Blockly.inject('blocklyDiv', options);
-
   App.workspace.addChangeListener( App.onChange );
 
   /*  Restore original blocks and undo/redo stacks
@@ -314,9 +330,9 @@ App.translateBlockly = function() {
 App.onChange = function ( e ) {
   //App.log('App.onChange('+e.type+')');
 
-  if ( e.type !== Blockly.Events.UI )
-    App.dirty = true ;
-
+  if ( e.type !== Blockly.Events.UI ) {
+    App.mustSave = true ;
+  }
   if ( e.type === Blockly.Events.CREATE ||
        e.type === Blockly.Events.DELETE ||
        e.type === Blockly.Events.MOVE ||
@@ -364,29 +380,17 @@ App.codeChanged = function ( ) {
     else
       App.codeDiv.textContent = code;
     zdebugger.reset();
+    cpu.reset();
+    memory.reset();
   }
 };
-
-
-// /**
-//  * Load the Prettify CSS and JavaScript.
-//  */
-// App.importPrettify = function() {
-//   var link = document.createElement('link');
-//   link.setAttribute('rel', 'stylesheet');
-//   link.setAttribute('href', '../prettify.css');
-//   document.head.appendChild(link);
-//   var script = document.createElement('script');
-//   script.setAttribute('src', '../prettify.js');
-//   document.head.appendChild(script);
-// };
 
 
 function onTrash ( )
 {
   var nblocks = App.workspace.getAllBlocks().length;
   if ( nblocks ) {
-    if ( App.dirty == false )
+    if ( App.mustSave == false )
       App.workspace.clear();
     else {
       var modal = document.getElementById('modal');
@@ -459,6 +463,162 @@ App.setCapture = function ( target )
 }
 
 
+App.onWsOpen = function ( )
+{
+  // App.log("onWsOpen")
+  document.getElementById("icon-file-upload").style.display = "none" ;
+  document.getElementById("icon-file-download").style.display = "none" ;
+  App.ws.send("SERIALS");
+}
+
+
+App.onWsClose = function ( )
+{
+  window.clearTimeout( App.wsTimeoutId );
+  // App.log("WS Closed.")
+  App.wsTimeoutId = window.setTimeout( App.wsConnect, 2000 );
+  document.getElementById("icon-file-upload").style.display = "inline" ;
+  document.getElementById("icon-file-download").style.display = "inline" ;
+}
+
+
+App.wsTimeout = function ( )
+{
+  // console.log("WS Timeout.")
+  //  if ( App.ws.readyState != CONNECTING && App.ws.readyState != OPEN ) {
+  if ( App.ws.readyState > 1 ) {
+    App.ws.close();
+  }
+}
+
+
+App.onWsMessage = function ( s )
+{
+  App.log("onWsMessage: "+s)
+}
+
+
+App.wsConnect = function ( )
+{
+  var ip = "127.0.0.1"
+  var port = "39000"
+
+  App.ws = new WebSocket("ws:"+ip+":"+port);
+  App.ws.onopen = App.onWsOpen ;
+  App.ws.onclose = App.onWsClose ;
+  App.ws.onmessage = App.onWsMessage ;
+
+  App.wsTimeoutId = {} ;
+  App.wsTimeoutId = window.setTimeout( App.wsTimeout, 1000 );
+}
+
+
+App.timeout = function ( e ) {
+  if ( App.sessionIsDirty ) {
+    App.saveSession();
+    App.sessionIsDirty = false ;
+  }
+  window.clearTimeout(App.timeoutId);
+  App.timeoutId = window.setTimeout(App.timeout,1000);
+}
+
+
+//  File loader: loads an XML file from the users file system and adds the
+//  blocks into the Blockly workspace.
+//
+App.onFileUpload = function ( )
+{
+  //  Handle file input dialog
+  //
+  var onFileInput = function(e) {
+    var reader = new FileReader();
+    reader.onload = function() {
+      App.log("file_upload()");
+      if ( App.textToWorkspace(reader.result) ) {
+	document.title = file.name ;
+	App.dirty = false ;
+      }
+    };
+
+    file = e.target.files[0];
+    App.log("file name="+file.name);
+    reader.readAsText(file);
+  };
+
+  //  Create one invisible browse button with event listener, and click it
+  //
+  var fileinput = document.getElementById('file-input');
+  if (fileinput == null) {
+    var fileinputDom = document.createElement('INPUT');
+    fileinputDom.type = 'file';
+    fileinputDom.id = 'file-input';
+
+    var fileinputWrapperDom = document.createElement('DIV');
+    fileinputWrapperDom.id = 'file-input-wrapper';
+    fileinputWrapperDom.style.display = 'none';
+    fileinputWrapperDom.appendChild(fileinputDom);
+
+    document.body.appendChild(fileinputWrapperDom);
+    fileinput = document.getElementById('file-input');
+    fileinput.addEventListener('change', onFileInput, false);
+  }
+  fileinput.click();
+};
+
+
+App.onFileDownload = function ( )
+{
+  var xmldom = Blockly.Xml.workspaceToDom(App.workspace);
+  var xmltext = Blockly.Xml.domToPrettyText(xmldom);
+  var blob = new Blob([xmltext], {type: 'text/plain;charset=utf-8'});
+  saveAs(blob, file.name);
+
+  //  There is no way to know if the user actually saved the file or
+  //  cancelled. Assume he did save.
+  //
+  App.dirty = false ;
+};
+
+
+
+//  Save the session configuration in the local storage
+//
+App.saveSession = function() {
+  if( window.localStorage ) {
+    var xmldom = Blockly.Xml.workspaceToDom(App.workspace);
+    var xmltext = Blockly.Xml.domToPrettyText(xmldom);
+    window.localStorage.document = xmltext ;
+    cpu.saveSession( window.localStorage );
+    memory.saveSession( window.localStorage );
+    hw.saveSession( window.localStorage );
+  }
+  else {
+    App.log("No local storage");
+  }
+}
+
+
+//  Restore the session previously saved in the local storage
+//
+App.restoreSession = function() {
+  if( window.localStorage ) {
+    if( 'document' in window.localStorage ) {
+      var s = localStorage.getItem('document');
+      App.textToWorkspace( s );
+      cpu.restoreSession( window.localStorage );
+      memory.restoreSession( window.localStorage );
+      hw.restoreSession( window.localStorage );
+    }
+    else {
+      App.log("No session backup found.");
+    }
+  }
+  else {
+    App.log("No local storage for session backup.");
+  }
+}
+
+
 /*    M a i n
  */
 App.init = function()
@@ -466,16 +626,24 @@ App.init = function()
   Blockly.HSV_SATURATION = 0.4 ; //0.45 ;
   Blockly.HSV_VALUE = 0.7 ; //0.65 ;
 
+  /*  Reserved words for Javascript generation
+   */
+  Blockly.JavaScript.addReservedWords('__block__,__monitor__,__pause__');
+
   App.workspace = null ;
-  App.dirty = false ;
+  App.sessionIsDirty = false ;
+  App.mustSave = false ;
+  App.timeoutId = window.setTimeout(App.timeout,1000);
 
   App.codeArea = document.getElementById('codeArea');
   App.blocklyDiv = document.getElementById('blocklyDiv');
   App.trashIcon = document.getElementById('trashIcon');
   App.modalDiscardConfirm = document.getElementById('modal-discard-confirm');
 
-  App.fileUploadIcon = document.getElementById("icon-file-upload");
-  App.fileDownloadIcon = document.getElementById("icon-file-download");
+  // App.fileUploadIcon = document.getElementById("icon-file-upload").onclick = App.onFileUpload ;
+  document.getElementById("icon-file-upload").onclick = App.onFileUpload ;
+  // App.fileDownloadIcon = document.getElementById("icon-file-download");
+  document.getElementById("icon-file-download").onclick = App.onFileDownload ;
 
   App.codeIcon = document.getElementById("codeIcon");
   App.codeIcon.onclick = codeIcon_onclick ;
@@ -497,17 +665,22 @@ App.init = function()
   window.addEventListener('resize', App.layout, false);
   App.layout();
 
-  zdebugger.setup();
-  file.init();
+  zdebugger.setup();	//  CPU window
+  cpu.setup();		//  CPU window
+  memory.setup();	//  Memory window
+  hw.setup();		//  Hardware window
 
   App.setupCapture();
 
+  if( ! window.localStorage ) {
+    App.log("WARNING: no local storage available for automatic backup.");
+  }
+   
   App.setup();
+//  App.wsConnect();
+
+  window.setTimeout( App.restoreSession, 500 );
 }
 
 
 window.addEventListener('load', App.init);
-
-window.setTimeout(
-  function() { App.textToWorkspace(
-    '<xml xmlns="http://www.w3.org/1999/xhtml"><block type="procedures_defnoreturn" id="i%D5TY649Qc`-(/NJB)c" x="530" y="110"><field name="NAME">faire</field><comment pinned="false" h="80" w="160">Décrire cette procédure…</comment><statement name="STACK"><block type="variables_set" id="x.]T+Efnq:i6Q%GdbR,6"><field name="VAR">compte</field><value name="VALUE"><block type="math_number" id="sz-8*vM_YZaL2sC?Z`}!"><field name="NUM">0</field></block></value><next><block type="controls_whileUntil" id="aD1C.?A;ghnxq3*.v|dC"><field name="MODE">WHILE</field><value name="BOOL"><block type="logic_compare" id="6du)-fmgoYSS/6sz,^mp"><field name="OP">NEQ</field><value name="A"><block type="variables_get" id="es/:#cC?C1E:[mPZ82Y*"><field name="VAR">compte</field></block></value><value name="B"><block type="math_number" id="r.QNpbbF7.UKOP-l2,8d"><field name="NUM">10</field></block></value></block></value><statement name="DO"><block type="variables_set" id=",KAWumeQRl6i8ZuDm|1C"><field name="VAR">compte</field><value name="VALUE"><block type="math_arithmetic" id="hJ;Aedg{k}5_hf51mf`l"><field name="OP">ADD</field><value name="A"><shadow type="math_number" id=",PN`r@V+ann9N5u@|]^o"><field name="NUM">1</field></shadow><block type="variables_get" id="V#VI^.,I-_ndduu(k:t+"><field name="VAR">compte</field></block></value><value name="B"><shadow type="math_number" id="Q6UOiB6,yF1(I]DWwHKf"><field name="NUM">1</field></shadow></value></block></value></block></statement></block></next></block></statement></block><block type="procedures_callnoreturn" id=".L[Z%B6qdIYwO7*44W}3" x="530" y="310"><mutation name="faire"></mutation></block></xml>'); }, 500 );

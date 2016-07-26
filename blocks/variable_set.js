@@ -1,6 +1,6 @@
 
 /* Copyright (c) 2016 Christophe Duparquet.
- * http://github.com/duparq/ublockly
+ * http://github.com/duparq/uprog
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
@@ -9,7 +9,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
-/*  A special version of Blockly's 'set variable' block
+/*  A special version of Blockly's 'set variable' block where the text is
+ *  replaced by an arrow.
  */
 
 'use strict';
@@ -27,14 +28,14 @@ Blockly.Blocks['variables_set'] = {
         {
           "type": "field_variable",
           "name": "VAR",
-          "variable": Blockly.Msg.VARIABLES_DEFAULT_NAME
+          "variable": "variable"
         },
 	{
 	  "type": "field_image",
-	  "src": "icons/variable_set.svg",
-	  "width": 20,
-	  "height": 15,
-	  "alt": "<--"
+	  "src": "blocks/variable_set.svg",
+	  "width": 18,
+	  "height": 16,
+	  "alt": "<-"
 	},
         {
           "type": "input_value",
@@ -43,11 +44,19 @@ Blockly.Blocks['variables_set'] = {
       ],
       "previousStatement": null,
       "nextStatement": null,
-      "colour": Blockly.Blocks.variables.HUE,
-      "tooltip": Blockly.Msg.VARIABLES_SET_TOOLTIP,
-      "helpUrl": Blockly.Msg.VARIABLES_SET_HELPURL
+      "colour": Blockly.Blocks.variables.HUE
     });
-    this.contextMenuMsg_ = Blockly.Msg.VARIABLES_SET_CREATE_GET;
+    this.i18n();
+  },
+  i18n: function() {
+    if ( App.language === 'fr' ) {
+      this.setTooltip("Change la valeur de la variable.");
+      this.contextMenuMsg_ = "Créer un bloc «Valeur de %1»";
+    }
+    else {
+      this.setTooltip("Change the value of the variable.");
+      this.contextMenuMsg_ = "Create a bloc «Value of %1»";
+    }
   },
   contextMenuType_: 'variables_get',
   customContextMenu: Blockly.Blocks['variables_get'].customContextMenu

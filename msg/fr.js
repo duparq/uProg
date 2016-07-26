@@ -4,25 +4,23 @@
 
 /*  Icons
  */
-App.fileUploadIcon.title = "Charge des blocs depuis un fichier.";
-App.fileDownloadIcon.title = "Télécharge le fichier de ces blocs.";
 App.trashIcon.title = "Supprime tous les blocs.";
 App.consoleIcon.title = "Affiche ou cache la console.";
 App.codeIcon.title = "Affiche ou cache le code produit.";
 
 /*  Blockly's toolbox
  */
-document.getElementById('catProcedures').setAttribute('name', 'Procédures');
-document.getElementById('catControls').setAttribute('name', 'Contrôles');
+document.getElementById('catIO').setAttribute('name', 'Entrées & sorties');
 document.getElementById('catLogic').setAttribute('name', 'Logique');
 document.getElementById('catMath').setAttribute('name', 'Opérations');
+document.getElementById('catStructures').setAttribute('name', 'Structures');
+document.getElementById('catTime').setAttribute('name', 'Temps');
 document.getElementById('catVariables').setAttribute('name', 'Variables');
-document.getElementById('catIO').setAttribute('name', 'Entrées & sorties');
 
 /*  Translate discard-confirm window
  */
 var e = App.modalDiscardConfirm
-e.getElementsByTagName('p')[0].innerHTML = "Voulez-vous vraiment supprimer tous les blocs ?";
+e.getElementsByTagName('p')[0].innerHTML = "Supprimer tous les blocs ?";
 e.getElementsByClassName('yes')[0].innerHTML = "Oui";
 e.getElementsByClassName('no')[0].innerHTML = "Non";
 

@@ -4,20 +4,18 @@
 
 /*  Icons
  */
-App.fileUploadIcon.title = "Upload a file to add blocks.";
-App.fileDownloadIcon.title = "Download.";
 App.trashIcon.title = "Delete all blocks.";
 App.consoleIcon.title = "Show or hide the console.";
 App.codeIcon.title = "Show or hide the generated code.";
 
 /*  Blockly's toolbox
  */
-document.getElementById('catProcedures').setAttribute('name', 'Procedures');
-document.getElementById('catControls').setAttribute('name', 'Controls');
+document.getElementById('catIO').setAttribute('name', 'Inputs & outputs');
 document.getElementById('catLogic').setAttribute('name', 'Logic');
 document.getElementById('catMath').setAttribute('name', 'Arithmetic');
+document.getElementById('catStructures').setAttribute('name', 'Structures');
+document.getElementById('catTime').setAttribute('name', 'Time');
 document.getElementById('catVariables').setAttribute('name', 'Variables');
-document.getElementById('catIO').setAttribute('name', 'Inputs & outputs');
 
 /*  Translate discard-confirm window
  */

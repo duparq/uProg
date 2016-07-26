@@ -1,5 +1,13 @@
 *~
 .#*
 *#
+*.cp.*
 closure-library
 google-closure-library-1f0116d/
+node_modules
+libserialport
+enumser
+tests/ws/diabolo
+tests/ws/servers/c/cwebsocket-master
+tests/ws/servers/c/ListSerialPorts
+tests/ws/servers/msdn

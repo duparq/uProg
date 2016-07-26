@@ -1,6 +1,6 @@
 
 /* Copyright (c) 2016 Christophe Duparquet.
- * http://github.com/duparq/ublockly
+ * http://github.com/duparq/uprog
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
@@ -30,37 +30,8 @@ zdebugger.timeoutId = null;
 zdebugger.speeds = [ 0, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000 ];
 zdebugger.speed = 8 ; // Integer required!
 zdebugger.pauseMS = zdebugger.speeds[zdebugger.speed];
+zdebugger.wrapped_pause = 0 ;
 
-
-/*  Replace original Javascript generator's variable getter/setter with these
- *  ones that provide wrappers for variable monitoring when the zdebugger asks
- *  for code generation.
- */
-// Blockly.JavaScript['variables_get'] = function ( block )
-// {
-//   var key1 = block.getFieldValue('VAR');
-//   var key2 = Blockly.JavaScript.variableDB_.getName(key1, Blockly.Variables.NAME_TYPE);
-//   if ( zdebugger.x_generate && zdebugger.monitors.hasOwnProperty(key1) )
-//     var code = "__get__('"+key1+"')";
-//   else
-//     var code = key2;
-
-//   return [code, Blockly.JavaScript.ORDER_ATOMIC];
-// };
-
-Blockly.JavaScript['variables_set'] = function ( block )
-{
-  var key1 = block.getFieldValue('VAR');
-  var key2 = Blockly.JavaScript.variableDB_.getName(key1, Blockly.Variables.NAME_TYPE);
-  var value = Blockly.JavaScript.valueToCode(
-    block, 'VALUE', Blockly.JavaScript.ORDER_ASSIGNMENT) || '0';
-
-  var code = key2+'='+value+';\n';
-  if ( zdebugger.x_generate && zdebugger.monitors.hasOwnProperty(key1) )
-    code += "__monitor__('"+key1+"', "+key2+");\n";
-
-  return code;
-};
 
 /*  Initialize UI elements
  */
@@ -93,7 +64,7 @@ zdebugger.setup = function ( ) {
 
   /*  Reserved words
    */
-  Blockly.JavaScript.addReservedWords('__block__,__get__,__monitor__');
+  Blockly.JavaScript.addReservedWords('__block__,__monitor__,__pause__');
 };
 
 
@@ -299,46 +270,52 @@ zdebugger.speedChanged = function ( ) {
  */
 zdebugger.milestone = function ( id ) {
   //App.log("zdebugger.milestone("+id+")");
+
+  console.log("zdebugger.milestone");
   zdebugger.x_milestone = true ;
   if ( zdebugger.x_showsteps )
     App.workspace.highlightBlock(id);
 };
 
 
-zdebugger.initApi = function ( interpreter, scope ) {
-
+zdebugger.initApi = function ( interpreter, scope )
+{
   //App.log("zdebugger.initApi");
   var i = interpreter ;
 
-  // Add an API function for highlighting blocks.
+  // Wrapper for highlighting blocks.
+  //
   var wrapper = function(id) {
     id = id ? id.toString() : '';
     return i.createPrimitive(zdebugger.milestone(id));
   };
   i.setProperty(scope, '__block__', i.createNativeFunction(wrapper));
 
-  /*  Variable wrapper: get variable value
-   */
-  // i.setProperty(
-  //   scope,
-  //   '__get__',
-  //   i.createNativeFunction( function(key) {
-  //     var value = zdebugger.monitors[key].value;
-  //     //log.sim("__get__('"+key+"') -> "+value);
-  //     return value;
-  //   }));
+  //  Wrapper for setting a value
+  //
+  i.setProperty( scope, '__monitor__',
+		 i.createNativeFunction( function(key,value) {
+		   zdebugger.monitors[key].span.innerHTML=value;
+		 }));
 
-  /*  Variable wrapper: set variable value
-   */
-  i.setProperty(
-    scope,
-    '__monitor__',
-    i.createNativeFunction( function(key,value) {
-      //App.log("__monitor__('"+key+"', "+value+")");
-      //log.sim(key+" = "+value);
-      //zdebugger.monitors[key].value=value;
-      zdebugger.monitors[key].span.innerHTML=value;
-    }));
+  // Wrapper for 'pause'
+  //
+  wrapper = function(n,u){ return i.createPrimitive( zdebugger.wrapper_pause(n,u) ); };
+  i.setProperty( scope, '__pause__', i.createNativeFunction( wrapper ));
+};
+
+
+zdebugger.wrapper_pause = function( n, u )
+{
+  var ms = parseInt(n);
+  if ( u == "s" )
+    ms = ms * 1000 ;
+  else if ( u == "us" || u == "cy" )
+    ms = ms / 1000 ;
+  if ( ms >= 1 ) {
+    console.log("Pause("+n+","+u+"): "+ms+" ms.");
+    zdebugger.wrapped_pause = ms ;
+  }
 };
 
 
@@ -463,14 +440,21 @@ zdebugger.next = function ( ) {
     return ;
   }
 
+  if ( zdebugger.x_running && zdebugger.wrapped_pause ) {
+    console.log("manage pause");
+    zdebugger.timeoutId = window.setTimeout( function(){zdebugger.next();},
+					     zdebugger.wrapped_pause );
+    zdebugger.wrapped_pause = 0 ;
+    return ;
+  }
+
   if ( zdebugger.x_milestone ) {
     zdebugger.x_milestone = false ;
     if ( !zdebugger.x_running )
       return ;
-    else {
-      zdebugger.timeoutId = window.setTimeout( function(){zdebugger.next();}, zdebugger.pauseMS );
-      return ;
-    }
+    zdebugger.timeoutId = window.setTimeout( function(){zdebugger.next();},
+					     zdebugger.pauseMS );
+    return ;
   }
 
   /*  Run at maximal speed between milestones

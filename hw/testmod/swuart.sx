@@ -1,0 +1,5 @@
+
+	;; -*- asm -*-
+
+#include "config_uart.h"
+#include <hwa/swuart.sx>

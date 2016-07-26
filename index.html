@@ -2,25 +2,28 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>UBlockly</title>
+    <title>uProg</title>
     <link rel="stylesheet" href="index.css">
     <link rel="stylesheet" href="topbar.css">
+    <link rel="stylesheet" href="window.css">
     <link rel="stylesheet" href="zdebugger.css">
+    <link rel="stylesheet" href="cpu/cpu.css">
+    <link rel="stylesheet" href="hw/hw.css">
+    <link rel="stylesheet" href="memory/memory.css">
   </head>
   <body>
 
     <!-- Top bar
       -->
     <div id="topbar">
-      <span id="appname">UBlockly</span>
-
+      <span id="appname">uProg</span>
       <img id="icon-file-upload" class="icon" src="icons/file-upload.svg"></img>
       <img id="icon-file-download" class="icon" src="icons/file-download.svg"></img>
       <img id="trashIcon" class="icon disabled" src="icons/trash.svg"></img>
       <img id="consoleIcon" class="icon" src="icons/console.svg"></img>
       <img id="codeIcon" class="icon" src="icons/code.svg"></img>
       <img id="zdebuggerIcon" class="icon" src="icons/zdebugger.svg"></img>
-
+      <!-- <img id="hwIcon" class="icon" src="hw/icon.svg"></img> -->
       <select id="language"></select>
     </div>
 
@@ -37,7 +40,7 @@
       <div id="codeDiv"></div>
     </div>
 
-    <!-- Simulator window (modal)
+    <!-- Simulator window
       -->
     <div id="zdebuggerWindow">
       <div id="zdebuggerWindowBar">
@@ -59,6 +62,47 @@
       </div>
     </div>
 
+    <!-- CPU window
+      -->
+    <div id="cpu" class="window">
+      <div class="bar">
+    	<img class="btn plus" src="icons/plus.svg"></img>
+    	<img class="btn minus" src="icons/minus.svg"></img>
+    	<span class="name"></span>
+      </div>
+      <div class="content">
+	  <img id="cpuPlayIcon" class="icon" src="cpu/play.svg"></img>
+	  <img id="cpuPauseIcon" class="icon" src="cpu/pause.svg"></img>
+	  <img id="cpuStopIcon" class="icon" src="cpu/stop.svg"></img>
+	  <img id="cpuStepIcon" class="icon" src="cpu/next.svg"></img>
+	  <input id="cpuSpeedRange" type="range" min="0" max="10" step="1" value="8">
+	  <span id="cpuSpeedSpan"></span>
+      </div>
+    </div>
+
+    <!-- Memory window
+      -->
+    <div id="memory" class="window">
+      <div class="bar">
+    	<img class="btn plus" src="icons/plus.svg"></img>
+    	<img class="btn minus" src="icons/minus.svg"></img>
+    	<span class="name"></span>
+      </div>
+      <div class="content">
+      </div>
+    </div>
+
+    <!-- Hardware window
+      -->
+    <div id="hw" class="window">
+      <div class="bar">
+    	<img class="btn plus" src="icons/plus.svg"></img>
+    	<img class="btn minus" src="icons/minus.svg"></img>
+    	<span class="name"></span>
+      </div>
+      <div class="content"></div>
+    </div>
+
     <!-- Console
       -->
     <div id="consoleSplitter"></div>
@@ -77,13 +121,11 @@
     </div>
 
     <xml id="toolbox" style="display: none">
-      <category id="catProcedures" colour="290">
+      <category id="catStructures" colour="290">
 	<block type="procedures_defnoreturn"></block>
 	<block type="procedures_defreturn"></block>
-      </category>
-      <category id="catControls" colour="120">
 	<block type="controls_if"></block>
-	<block type="controls_whileUntil"></block>
+	<block type="uprog_while"></block>
 	<block type="controls_for">
           <value name="FROM">
             <shadow type="math_number">
@@ -101,7 +143,8 @@
             </shadow>
           </value>
 	</block>
-	<block type="controls_flow_statements"></block>
+	<block type="uprog_break"></block>
+	<block type="uprog_continue"></block>
       </category>
       <category id="catLogic" colour="210">
 	<block type="logic_boolean"></block>
@@ -130,8 +173,12 @@
           </value>
 	</block>
       </category>
+      <category id="catTime" colour="45">
+	<block type="uprog_pause"></block>
+      </category>
       <category id="catVariables" colour="330">
-      	<block type="variables_set"></block>
+      	<block type="uprog_setvar"></block>
+      	<!-- <block type="variables_set"></block> -->
       	<block type="variables_get"></block>
       	<block type="math_number"></block>
       </category>
@@ -171,23 +218,33 @@
     <script src="blockly/generators/javascript/math.js"></script>
     <script src="blockly/generators/javascript/variables.js"></script>
     <!-- <script src="blockly/generators/javascript/.js"></script> -->
-    <!-- <script src="blockly/generators/javascript/.js"></script> -->
 
-    
-    <!-- Overloaded scripts
+    <!-- Overloaded Blockly scripts
       -->
     <script src="blockly/core/field_dropdown.js"></script>
     <script src="blockly/core/field_variable.js"></script>
 
-    <script src="blocks/variable_set.js"></script>
+    <!-- Original uProg blocks
+      -->
+    <script src="blocks/setvar.js"></script>
+    <!-- <script src="blocks/variable_set.js"></script> -->
     <script src="blocks/procedure.js"></script>
+    <script src="blocks/pause.js"></script>
+    <script src="blocks/while.js"></script>
+    <script src="blocks/break.js"></script>
+    <script src="blocks/continue.js"></script>
 
     <script src="log.js"></script>
     <script src="FileSaver.js"></script>
-    <script src="file.js"></script>
+    <!-- <script src="file.js"></script> -->
 
     <script src="blockly/demos/interpreter/acorn_interpreter.js"></script>
     <script src="zdebugger.js"></script>
+
+    <script src="window.js"></script>
+    <script src="hw/hw.js"></script>
+    <script src="cpu/cpu.js"></script>
+    <script src="memory/memory.js"></script>
 
     <script src="app.js"></script>
   </body>
