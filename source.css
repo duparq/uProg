@@ -1,0 +1,18 @@
+
+/* #source.window { */
+/*     /\* resize: both; *\/ */
+/*     /\* overflow: hidden; *\/ */
+/* } */
+
+#sourceDiv {
+    /* display: block; */
+    /* width: 20%; */
+    min-width: 20ch;
+    min-height: 5em;
+    /* border: 1px solid #ddd; */
+    /* padding: 4px; */
+    white-space: pre-wrap;
+    font-family: monospace;
+
+    overflow: auto;
+}

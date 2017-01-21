@@ -23,7 +23,7 @@ memory.setup = function ( )
 {
   this.id = 'memory' ;
   windowSetup( this );
-  this.i18n();
+  // this.i18n();
 
   //  '__monitor__' is a wrapper used to update the memory content while the
   //  interpreter is running
@@ -55,7 +55,7 @@ memory.reset = function ( )
 
   var variables = Blockly.Variables.allVariables(App.workspace);
 
-  if ( variables.length ) {
+  if ( variables.length && Blockly.JavaScript.variableDB_ ) {
     var table = document.createElement('table');
     for ( var i=0 ; i < variables.length ; i++) {
       var tr = document.createElement('tr');
@@ -66,19 +66,42 @@ memory.reset = function ( )
       //
       var tdn = document.createElement('td');
       tdn.classList.add('name');
-      tdn.innerHTML = key ;
+      tdn.appendChild(document.createTextNode(key));
       tr.appendChild(tdn);
 
       //  Variable value
       //
       var tdv = document.createElement('td');
       tdv.classList.add('value');
+      tdv.appendChild(document.createTextNode('?'));
       tr.appendChild(tdv);
+
+      //  Variable type
+      //
+      // var td = document.createElement('td');
+      // td.classList.add('type');
+      // td.appendChild(document.createTextNode('bool'));
+      // tr.appendChild(td);
+      var td = document.createElement('td');
+      td.classList.add('type');
+      var select = document.createElement('select');
+      select.options.add(new Option('auto','auto'));
+      select.options.add(new Option('bool','bool'));
+      select.options.add(new Option('uint','uint'));
+      td.onwheel = memory.onOptionWheel;
+      td.appendChild(select);
+      tr.appendChild(td);
 
       table.appendChild(tr);
 
       memory.keys[key]={name:tdn, value:tdv};
     }
+    content.appendChild(table);
   }
-  content.appendChild(table);
 };
+
+
+memory.onOptionWheel = function ( ev )
+{
+  App.log("memory.onOptionWheel");
+}

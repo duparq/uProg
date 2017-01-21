@@ -14,7 +14,7 @@
 #endif
 
 
-typedef int	HANDLE ;
+typedef int			HANDLE ;
 #define INVALID_HANDLE_VALUE	-1
 
 static HANDLE			sid = INVALID_HANDLE_VALUE ; /* Serial id */

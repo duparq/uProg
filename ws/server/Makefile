@@ -11,7 +11,7 @@ MFD		:=	$(dir $(lastword $(MAKEFILE_LIST)))
 
 #  Output directory and files basename
 #
-OUTDIR		= build/$(TARGET)
+OUTDIR		?= build/$(TARGET)
 
 
 #  Messages in english
@@ -26,23 +26,29 @@ export LANG
 #									       #
 ################################################################################
 
-.PHONY: all
+.PHONY: all linux win32
 
 ifeq (,$(TARGET))
 all:
 	$(MAKE) TARGET=linux
 	$(MAKE) TARGET=win32
+
+linux:
+	$(MAKE) TARGET=linux
+
+win32:
+	$(MAKE) TARGET=win32
 endif
 
 ifeq (linux,$(TARGET))
   ARCH		:=
-  OUT		= $(OUTDIR)/wsserver
+  OUT		:= $(OUTDIR)/wsserver
 all: $(OUT)
 endif
 
 ifeq (win32,$(TARGET))
   ARCH		:= i686-w64-mingw32-
-  OUT		= $(OUTDIR)/wsserver.exe
+  OUT		:= $(OUTDIR)/wsserver.exe
 all: $(OUT)
 endif
 

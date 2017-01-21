@@ -15,13 +15,14 @@ var App = {};
 
 App.MSG = {};
 App.generatedCode = '' ;
+App.filename = "uprog.xml";
 
 
 /*  Display and log messages
  */
 App.log = function(msg) {
   console.log(msg);
-  var c = App.consoleDiv;
+  var c = document.getElementById("consoleDiv");
   var x_scroll = c.scrollHeight - c.clientHeight <= c.scrollTop + 1;
 
   c.innerHTML = c.innerHTML.concat(msg+"\r\n");
@@ -31,120 +32,25 @@ App.log = function(msg) {
 };
 
 
-/*  Show/hide the code div
- */
-function codeIcon_onclick ( )
+App.loadScript = function ( path, callback )
 {
-  var d = window.getComputedStyle(App.codeDiv).display ;
-  if ( d === "none" ) {
-    App.codeSplitter.style.display="block";
-    App.codeDiv.style.display="block";
-  }
-  else {
-    App.codeSplitter.style.display="none";
-    App.codeDiv.style.display="none";
-  }
-  App.layout();
+  App.script  = document.createElement("script");
+  App.script.src  = path;
+  App.script.type = "text/javascript";
+  App.script.onload = App.scriptLoaded ;
+  App.script.callback = callback ;
+  document.body.appendChild(App.script);
 }
 
 
-/*  Code splitter
- */
-function codeSplitter_onmousedown ( e )
+App.scriptLoaded = function ( )
 {
-  var prev = App.blocklyDiv;
-  var next = App.codeDiv;
-
-  var v0 = e.clientX ;
-  var pv0 = parseInt(window.getComputedStyle(prev).width, 10);
-  var nv0 = parseInt(window.getComputedStyle(next).width, 10);
-
-  // App.codeSplitter.setCapture();
-  // e.preventDefault();
-  App.setCapture( App.codeSplitter );
-
-  App.codeSplitter.onmousemove = function(e) {
-    /*
-     *  Resize elements
-     */
-    var dv = v0 - e.clientX ;
-    var pmv = parseInt(window.getComputedStyle(prev).minWidth,10) ;
-    var nmv = parseInt(window.getComputedStyle(next).minWidth,10) ;
-
-    if ( (pmv != pmv || pv0-dv >= pmv) &&
-	 (nmv != nmv || nv0+dv >= nmv) ) {
-      prev.style.width = pv0-dv+'px' ;
-      next.style.width = nv0+dv+'px' ;
-
-      /*  Have the Blockly workspace resized
-       */
-      App.layout();
-    }
-    // e.preventDefault();
-  }
-};
-
-function codeSplitter_onmouseup ( e ) {
-  // App.codeSplitter.releaseCapture();
-  App.codeSplitter.onmousemove = null;
-  // e.preventDefault();
-  App.setCapture( null );
-};
-
-
-/*  Show/hide the console
- */
-function consoleIcon_onclick ( ) {
-  var d = window.getComputedStyle(App.consoleDiv).display ;
-  if ( d === "none" ) {
-    App.consoleSplitter.style.display="block";
-    App.consoleDiv.style.display="block";
-  }
-  else {
-    App.consoleSplitter.style.display="none";
-    App.consoleDiv.style.display="none";
-  }
-  App.layout();
+  document.body.removeChild(App.script);
+  var callback = App.script.callback ;
+  App.script = null ;
+  if ( callback )
+    callback();
 }
-
-function consoleSplitter_onmousedown ( e )
-{
-  //var prev = App.blocklyDiv;
-  var prev = App.codeArea;
-  var next = App.consoleDiv;
-
-  var y0 = e.clientY ;
-  var ph0 = parseInt(window.getComputedStyle(prev).height, 10);
-  var nh0 = parseInt(window.getComputedStyle(next).height, 10);
-
-  // App.consoleSplitter.setCapture();
-  // e.preventDefault();
-  App.setCapture( App.consoleSplitter );
-
-  App.consoleSplitter.onmousemove = function(e) {
-    var dy = y0 - e.clientY ;
-    var pmh = parseInt(window.getComputedStyle(prev).minHeight,10) ;
-    var nmh = parseInt(window.getComputedStyle(next).minHeight,10) ;
-
-    if ( (pmh != pmh || ph0-dy >= pmh) &&
-	 (nmh != nmh || nh0+dy >= nmh) ) {
-      prev.style.height = ph0-dy+'px' ;
-      next.style.height = nh0+dy+'px' ;
-
-      App.layout();
-    }
-    // e.preventDefault();
-  }
-};
-
-
-function consoleSplitter_onmouseup ( e )
-{
-  App.setCapture( null );
-  // App.consoleSplitter.releaseCapture();
-  App.consoleSplitter.onmousemove = null;
-  // e.preventDefault();
-};
 
 
 App.layout = function() {
@@ -152,174 +58,25 @@ App.layout = function() {
     //log("Layout");
 
     var w = document.body.clientWidth - blocklyDiv.offsetLeft ;
-    if ( window.getComputedStyle(App.codeDiv).display !== "none" ) {
-      w -= parseInt(window.getComputedStyle(App.codeSplitter).width, 10);
-      w -= parseInt(window.getComputedStyle(App.codeDiv).width, 10);
-    }
+    // if ( window.getComputedStyle(App.sourceDiv).display !== "none" ) {
+    //   w -= parseInt(window.getComputedStyle(App.codeSplitter).width, 10);
+    //   w -= parseInt(window.getComputedStyle(App.sourceDiv).width, 10);
+    // }
     w += 8 ;
     blocklyDiv.style.width = w+'px' ;
 
     var h = document.body.clientHeight - blocklyDiv.offsetTop ;
-    if ( window.getComputedStyle(App.consoleDiv).display !== "none" ) {
-      h -= parseInt(window.getComputedStyle(App.consoleSplitter).height, 10);
-      h -= parseInt(window.getComputedStyle(App.consoleDiv).height, 10);
-    }
-    else
-      h += 6 ;
+    // if ( window.getComputedStyle(App.consoleDiv).display !== "none" ) {
+    //   h -= parseInt(window.getComputedStyle(App.consoleSplitter).height, 10);
+    //   h -= parseInt(window.getComputedStyle(App.consoleDiv).height, 10);
+    // }
+    // else
+    h += 6 ;
     blocklyDiv.style.height = h+'px' ;
 
     Blockly.svgResize(App.workspace);
   }
 }
-
-
-App.setup = function() {
-  /* Lookup for names of supported languages.  Keys should be in ISO 639 format.
-   */
-  var LANGNAMES = {
-    'en': 'English',
-    'fr': 'Français',
-  };
-
-  App.language = navigator.language;
-
-  /*  Sort languages alphabetically.
-   */
-  var languages = [];
-  for (var l in LANGNAMES) {
-    languages.push([LANGNAMES[l], l]);
-  }
-  var comp = function(a, b) {
-    if (a[0] > b[0]) return 1;
-    if (a[0] < b[0]) return -1;
-    return 0;
-  };
-  languages.sort(comp);
-  App.languages = languages;
-
-  /*  Populate the language selector and select the current value
-   */
-  App.langMenu = document.getElementById('language');
-  App.langMenu.options.length = 0;
-  for (var i = 0; i < languages.length; i++) {
-    var tuple = languages[i];
-    var value = tuple[tuple.length - 1];
-    var option = new Option(tuple[0], value);
-    if (value === App.language) { option.selected = true; }
-    App.langMenu.options.add(option);
-  }
-
-  App.langMenu.onchange = App.changeLanguage ;
-  App.changeLanguage(); // Apply default translation
-};
-
-
-/*  Set up UI language change
- *    Load UI translation script according to the selected option
- *    Apply the translation
- */
-App.changeLanguage = function() {
-  App.language = App.languages[App.langMenu.selectedIndex][1];
-  App.i18n();
-};
-
-
-App.i18n = function ( )
-{
-  if ( App.language === 'fr' ) {
-    document.getElementById("icon-file-upload").title = "Charge des blocs depuis un fichier.";
-    document.getElementById("icon-file-download").title = "Télécharge le fichier de ces blocs.";
-  }
-  else {
-    document.getElementById("icon-file-upload").title = "Upload a file to add blocks.";
-    document.getElementById("icon-file-download").title = "Download.";
-  }
-
-  cpu.i18n();
-  memory.i18n();
-  hw.i18n();
-  App.script  = document.createElement("script");
-  App.script.src  = "msg/"+App.language+".js";
-  App.script.type = "text/javascript";
-  document.body.appendChild(App.script);
-};
-
-
-/*  Replace the workspace for translation.
- *    NOTE: this is called by the application-loaded translation script.
- */
-App.translateBlockly = function() {
-  //  App.log("translateBlockly");
-
-
-  /*  Translate uProg's blocks
-   */
-  Blockly.Msg.PROCEDURES_BEFORE_PARAMS = ", selon :";
-  Blockly.Msg.PROCEDURES_CALL_BEFORE_PARAMS = ", selon :";
-  Blockly.Msg.PROCEDURES_CREATE_DO = "Créer un bloc «%1»";
-
-  /*  Save the blocks and the undo/redo stacks
-   */
-  var dom = null ;
-  // var undostack ;
-  // var redostack ;
-  if ( App.workspace !== null ) {
-    dom = Blockly.Xml.workspaceToDom(App.workspace);
-    // undostack = App.workspace.undoStack_;
-    // redostack = App.workspace.redoStack_;
-    // App.log("workspace.undoStack_ = "+undostack);
-  }
-
-  /*  Remove existing toolboxes
-   */
-  var tbs = document.body.getElementsByClassName('blocklyToolboxDiv');
-  for ( var i=0, tb ; tb=tbs[i] ; i++ )
-    document.body.removeChild(tb);
-
-  /*  Flush the blocklyDiv
-   */
-  var e = document.getElementById('blocklyDiv');
-  while (e.lastChild)
-    e.removeChild(e.lastChild);
-
-  /*  Remove existing Blockly translations
-   */
-  delete Blockly.Msg.fr;
-  delete Blockly.Msg.en;
-
-  /*  Inject a new workspace
-   */
-  var options = {
-    toolbox: document.getElementById('toolbox'),
-    zoom: {
-      controls: false,
-      wheel: true,
-      startScale: 1.0,
-      maxScale: 3,
-      minScale: 0.3,
-      scaleSpeed: 1.2},
-    grid: {
-      spacing: 20,
-      length: 20,
-      colour: '#eef',
-      snap: true},
-    trashcan: false
-  };
-  App.workspace = Blockly.inject('blocklyDiv', options);
-  App.workspace.addChangeListener( App.onChange );
-
-  /*  Restore original blocks and undo/redo stacks
-   */
-  if ( dom !== null ) {
-    Blockly.Xml.domToWorkspace( dom, App.workspace );
-    // App.workspace.undoStack_ = undostack;
-    // App.workspace.redoStack_ = redostack;
-  }
-
-  App.layout();
-
-  document.body.removeChild(App.script);
-};
 
 
 /*  Process workspace's 'change' events to update the generated code. 'move'
@@ -328,10 +85,11 @@ App.translateBlockly = function() {
  *  rate.
  */
 App.onChange = function ( e ) {
-  //App.log('App.onChange('+e.type+')');
+  // App.log('App.onChange('+e.type+')');
 
   if ( e.type !== Blockly.Events.UI ) {
     App.mustSave = true ;
+    App.sessionIsDirty = true ;
   }
   if ( e.type === Blockly.Events.CREATE ||
        e.type === Blockly.Events.DELETE ||
@@ -340,7 +98,7 @@ App.onChange = function ( e ) {
 
     if ( App.moveTimeoutId != null )
       window.clearTimeout(App.moveTimeoutId);
-    if ( codeDiv.style.display !== 'none' )
+    if ( sourceDiv.style.display !== 'none' )
       App.moveTimeoutId = window.setTimeout(App.codeChanged,250);
   }
 };
@@ -361,68 +119,77 @@ App.codeChanged = function ( ) {
     App.trashIcon.onclick = null ;
   }
 
-  /*  Generate target code from the blocks.
-   */
+  // Generate target code from the blocks.
+  //
 //  Blockly.JavaScript.STATEMENT_PREFIX = null;
   var code = Blockly.JavaScript.workspaceToCode(App.workspace);
 
   if ( App.generatedCode !== code ) {
     App.generatedCode = code ;
-    /*
-     *  Generated code changed, need to update window and reset the debugger
-     */
-    /*  Prettify if possible
-     */
+    //    
+    //  Generated code changed, need to update window and reset the debugger
+    //  Prettify if possible
+    //
+    var sourceDiv = document.getElementById('sourceDiv');
     if (typeof prettyPrintOne == 'function') {
       code = prettyPrintOne(code, 'js');
-      App.codeDiv.innerHTML = code;
+      sourceDiv.innerHTML = code;
     }
     else
-      App.codeDiv.textContent = code;
-    zdebugger.reset();
+      sourceDiv.textContent = code;
+
     cpu.reset();
-    memory.reset();
   }
 };
 
 
 function onTrash ( )
 {
-  var nblocks = App.workspace.getAllBlocks().length;
-  if ( nblocks ) {
-    if ( App.mustSave == false )
-      App.workspace.clear();
-    else {
-      var modal = document.getElementById('modal');
-      modal.onclick = function(e) {
-	modal.style.display = "none";
-	dialog.style.display = "none";
-      }
-      var dialog = document.getElementById('modal-discard-confirm');
-      var yes = dialog.getElementsByClassName('yes')[0];
-      yes.onclick = function() {
-	App.workspace.clear();
-      }
-      modal.style.display = "block";
-      dialog.style.display = "block";
-    }
-  }
+  // var nblocks = App.workspace.getAllBlocks().length;
+  // if ( nblocks ) {
+  //   if ( App.mustSave == false )
+  //     App.workspace.clear();
+  //   else {
+  //     var modal = document.getElementById('modal');
+  //     modal.onclick = function(e) {
+  // 	modal.style.display = "none";
+  // 	dialog.style.display = "none";
+  //     }
+  //     var dialog = document.getElementById('modal-discard-confirm');
+  //     var yes = dialog.getElementsByClassName('yes')[0];
+  //     yes.onclick = function() {
+  // 	App.workspace.clear();
+  //     }
+  //     modal.style.display = "block";
+  //     dialog.style.display = "block";
+  //   }
+  // }
+  App.workspace.clear();
 }
 
 
 App.textToWorkspace = function ( text )
 {
   var dom = null;
-  try { dom = Blockly.Xml.textToDom( text ); } catch (e) {}
-  if ( dom ) {
-    try {
-      Blockly.Xml.domToWorkspace(dom, App.workspace);
-    } catch (e) { dom = null; }
+  // try { dom = Blockly.Xml.textToDom( text ); } catch (e) {}
+  // if ( dom ) {
+  //   try {
+  //     Blockly.Xml.domToWorkspace(dom, App.workspace);
+  //   } catch (e) { dom = null; }
+  // }
+  try {
+    dom = Blockly.Xml.textToDom( text );
+    Blockly.Xml.domToWorkspace(dom, App.workspace);
   }
-  if ( dom === null ) {
-    alert('Invalid XML');
+  catch (e) {
+
+  // if ( dom === null ) {
+    // alert('Invalid XML');
     App.log('The XML file was not successfully parsed into blocks.' +
 	    'Please review the XML code and try again.');
+    sourceDiv.textContent = text;
+    // App.createWorkspace();
+    App.workspace.clear();
   }
   return dom;
 };
@@ -463,60 +230,10 @@ App.setCapture = function ( target )
 }
 
 
-App.onWsOpen = function ( )
-{
-  // App.log("onWsOpen")
-  document.getElementById("icon-file-upload").style.display = "none" ;
-  document.getElementById("icon-file-download").style.display = "none" ;
-  App.ws.send("SERIALS");
-}
-
-
-App.onWsClose = function ( )
-{
-  window.clearTimeout( App.wsTimeoutId );
-  // App.log("WS Closed.")
-  App.wsTimeoutId = window.setTimeout( App.wsConnect, 2000 );
-  document.getElementById("icon-file-upload").style.display = "inline" ;
-  document.getElementById("icon-file-download").style.display = "inline" ;
-}
-
-
-App.wsTimeout = function ( )
-{
-  // console.log("WS Timeout.")
-  //  if ( App.ws.readyState != CONNECTING && App.ws.readyState != OPEN ) {
-  if ( App.ws.readyState > 1 ) {
-    App.ws.close();
-  }
-}
-
-
-App.onWsMessage = function ( s )
-{
-  App.log("onWsMessage: "+s)
-}
-
-
-App.wsConnect = function ( )
-{
-  var ip = "127.0.0.1"
-  var port = "39000"
-
-  App.ws = new WebSocket("ws:"+ip+":"+port);
-  App.ws.onopen = App.onWsOpen ;
-  App.ws.onclose = App.onWsClose ;
-  App.ws.onmessage = App.onWsMessage ;
-
-  App.wsTimeoutId = {} ;
-  App.wsTimeoutId = window.setTimeout( App.wsTimeout, 1000 );
-}
-
-
 App.timeout = function ( e ) {
+  // App.log("App.timeout");
   if ( App.sessionIsDirty ) {
     App.saveSession();
-    App.sessionIsDirty = false ;
   }
   window.clearTimeout(App.timeoutId);
   App.timeoutId = window.setTimeout(App.timeout,1000);
@@ -533,16 +250,17 @@ App.onFileUpload = function ( )
   var onFileInput = function(e) {
     var reader = new FileReader();
     reader.onload = function() {
-      App.log("file_upload()");
+      // App.log("file_upload()");
       if ( App.textToWorkspace(reader.result) ) {
-	document.title = file.name ;
+	document.title = App.filename ;
 	App.dirty = false ;
       }
     };
 
-    file = e.target.files[0];
-    App.log("file name="+file.name);
+    var file = e.target.files[0];
+    // App.log("file name="+file.name);
     reader.readAsText(file);
+    App.filename = file.name;
   };
 
   //  Create one invisible browse button with event listener, and click it
@@ -571,7 +289,7 @@ App.onFileDownload = function ( )
   var xmldom = Blockly.Xml.workspaceToDom(App.workspace);
   var xmltext = Blockly.Xml.domToPrettyText(xmldom);
   var blob = new Blob([xmltext], {type: 'text/plain;charset=utf-8'});
-  saveAs(blob, file.name);
+  saveAs(blob, App.filename);
 
   //  There is no way to know if the user actually saved the file or
   //  cancelled. Assume he did save.
@@ -584,16 +302,18 @@ App.onFileDownload = function ( )
 //  Save the session configuration in the local storage
 //
 App.saveSession = function() {
+  // App.log("App.saveSession");
   if( window.localStorage ) {
+    // App.log("App.saveSession");
     var xmldom = Blockly.Xml.workspaceToDom(App.workspace);
     var xmltext = Blockly.Xml.domToPrettyText(xmldom);
     window.localStorage.document = xmltext ;
+    source.saveSession( window.localStorage );
+    logger.saveSession( window.localStorage );
     cpu.saveSession( window.localStorage );
     memory.saveSession( window.localStorage );
     hw.saveSession( window.localStorage );
-  }
-  else {
-    App.log("No local storage");
+    App.sessionIsDirty = false ;
   }
 }
 
@@ -601,21 +321,72 @@ App.saveSession = function() {
 //  Restore the session previously saved in the local storage
 //
 App.restoreSession = function() {
+  // App.log("App.restoreSession");
   if( window.localStorage ) {
     if( 'document' in window.localStorage ) {
-      var s = localStorage.getItem('document');
-      App.textToWorkspace( s );
+
+      //  Restore windows
+      //
+      source.restoreSession( window.localStorage );
+      logger.restoreSession( window.localStorage );
       cpu.restoreSession( window.localStorage );
       memory.restoreSession( window.localStorage );
       hw.restoreSession( window.localStorage );
+
+      //  Restore blocks
+      //
+      try {
+	var s = localStorage.getItem('document');
+	App.textToWorkspace( s );
+      }
+      catch ( e ) {
+	// App.onTrash();
+	App.textToWorkspace( "" );
+      }
     }
     else {
       App.log("No session backup found.");
     }
   }
-  else {
-    App.log("No local storage for session backup.");
-  }
+}
+
+
+/*  Install a new Blockly workspace
+ */
+App.createWorkspace = function ( )
+{
+  // Remove existing toolboxes
+  //
+  var tbs = document.body.getElementsByClassName('blocklyToolboxDiv');
+  for ( var i=0, tb ; tb=tbs[i] ; i++ )
+    document.body.removeChild(tb);
+
+  // Flush the blocklyDiv
+  //
+  var e = document.getElementById('blocklyDiv');
+  while (e.lastChild)
+    e.removeChild(e.lastChild);
+
+  // Inject a new workspace
+  //
+  var options = {
+    toolbox: document.getElementById('toolbox'),
+    zoom: {
+      controls: false,
+      wheel: true,
+      startScale: 1.0,
+      maxScale: 3,
+      minScale: 0.3,
+      scaleSpeed: 1.2},
+    grid: {
+      spacing: 20,
+      length: 20,
+      colour: '#eef',
+      snap: true},
+    trashcan: false
+  };
+  App.workspace = Blockly.inject('blocklyDiv', options);
+  App.workspace.addChangeListener( App.onChange );
 }
 
 
@@ -623,8 +394,10 @@ App.restoreSession = function() {
  */
 App.init = function()
 {
+  // App.log("App.init");
   Blockly.HSV_SATURATION = 0.4 ; //0.45 ;
   Blockly.HSV_VALUE = 0.7 ; //0.65 ;
+  Blockly.BlockSvg.START_HAT = true ;
 
   /*  Reserved words for Javascript generation
    */
@@ -635,37 +408,18 @@ App.init = function()
   App.mustSave = false ;
   App.timeoutId = window.setTimeout(App.timeout,1000);
 
-  App.codeArea = document.getElementById('codeArea');
   App.blocklyDiv = document.getElementById('blocklyDiv');
   App.trashIcon = document.getElementById('trashIcon');
   App.modalDiscardConfirm = document.getElementById('modal-discard-confirm');
 
-  // App.fileUploadIcon = document.getElementById("icon-file-upload").onclick = App.onFileUpload ;
   document.getElementById("icon-file-upload").onclick = App.onFileUpload ;
-  // App.fileDownloadIcon = document.getElementById("icon-file-download");
   document.getElementById("icon-file-download").onclick = App.onFileDownload ;
 
-  App.codeIcon = document.getElementById("codeIcon");
-  App.codeIcon.onclick = codeIcon_onclick ;
-  App.codeSplitter = document.getElementById('codeSplitter');
-  App.codeSplitter.onmousedown = codeSplitter_onmousedown ;
-  App.codeSplitter.onmouseup = codeSplitter_onmouseup ;
-  App.codeDiv = document.getElementById('codeDiv');
-
-  App.consoleIcon = document.getElementById("consoleIcon");
-  App.consoleIcon.onclick = consoleIcon_onclick ;
-  App.consoleSplitter = document.getElementById('consoleSplitter');
-  App.consoleSplitter.onmousedown = consoleSplitter_onmousedown ;
-  App.consoleSplitter.onmouseup = consoleSplitter_onmouseup ;
-  App.consoleDiv = document.getElementById("consoleDiv");
-
-  App.zdebuggerIcon = document.getElementById("zdebuggerIcon");
-  App.zdebuggerIcon.onclick = zdebugger.show ;
-
   window.addEventListener('resize', App.layout, false);
-  App.layout();
+  // App.layout();
 
-  zdebugger.setup();	//  CPU window
+  source.setup();	//  Source window
+  logger.setup();	//  Console window
   cpu.setup();		//  CPU window
   memory.setup();	//  Memory window
   hw.setup();		//  Hardware window
@@ -675,12 +429,146 @@ App.init = function()
   if( ! window.localStorage ) {
     App.log("WARNING: no local storage available for automatic backup.");
   }
-   
-  App.setup();
-//  App.wsConnect();
 
-  window.setTimeout( App.restoreSession, 500 );
+  // App.setup();
+
+//   window.setTimeout( App.restoreSession, 500 );
+// }
+
+
+// App.setup = function() {
+
+  //  Lookup for names of supported languages.  Keys should be in ISO 639 format.
+  //
+  var LANGNAMES = {
+    'en': 'English',
+    'fr': 'Français',
+  };
+
+  App.language = navigator.language;
+
+  //  Sort languages alphabetically.
+  //
+  var languages = [];
+  for (var l in LANGNAMES) {
+    languages.push([LANGNAMES[l], l]);
+  }
+  var comp = function(a, b) {
+    if (a[0] > b[0]) return 1;
+    if (a[0] < b[0]) return -1;
+    return 0;
+  };
+  languages.sort(comp);
+  App.languages = languages;
+
+  // App.restoreSession();
+
+  //  Populate the language selector and select the current value
+  //
+  App.langMenu = document.getElementById('language');
+  App.langMenu.options.length = 0;
+  for (var i = 0; i < languages.length; i++) {
+    var tuple = languages[i];
+    var value = tuple[tuple.length - 1];
+    var option = new Option(tuple[0], value);
+    if (value === App.language) { option.selected = true; }
+    App.langMenu.options.add(option);
+  }
+
+  App.langMenu.onchange = App.changeLanguage ;
+  App.changeLanguage(); // Apply default translation
+};
+
+
+// Set up UI language change
+//   Load UI translation script according to the selected option
+//   Apply the translation
+App.changeLanguage = function ( )
+{
+  App.language = App.languages[App.langMenu.selectedIndex][1];
+  App.i18n();
+};
+
+
+App.i18n = function ( )
+{
+  // App.log("App.i18n");
+
+  if ( App.language === 'fr' ) {
+    document.getElementById("icon-file-upload").title = "Charge des blocs depuis un fichier.";
+    document.getElementById("icon-file-download").title = "Télécharge le fichier de ces blocs.";
+  }
+  else {
+    document.getElementById("icon-file-upload").title = "Upload a file to add blocks.";
+    document.getElementById("icon-file-download").title = "Download.";
+  }
+
+  source.i18n();
+  cpu.i18n();
+  memory.i18n();
+  hw.i18n();
+
+  // App.script  = document.createElement("script");
+  // App.script.src  = "msg/"+App.language+".js";
+  // App.script.type = "text/javascript";
+  // App.script.onload = App.i18n2 ;
+  // document.body.appendChild(App.script);
+
+  App.loadScript('msg/'+App.language+'.js', App.i18n2);
+};
+
+
+// Load Blockly's translations
+//
+App.i18n2 = function ( )
+{
+  App.loadScript('blockly/msg/js/'+App.language+'.js', App.i18n3);
 }
 
 
-window.addEventListener('load', App.init);
+App.i18n3 = function ( )
+{
+  // App.log("App.i18n3");
+
+  // Translate uProg's blocks
+  //
+  Blockly.Msg.PROCEDURES_BEFORE_PARAMS = ", selon :";
+  Blockly.Msg.PROCEDURES_CALL_BEFORE_PARAMS = ", selon :";
+  Blockly.Msg.PROCEDURES_CREATE_DO = "Créer un bloc «%1»";
+
+  // Save the blocks and the undo/redo stacks
+  //
+  var dom = null ;
+  // var undostack ;
+  // var redostack ;
+  if ( App.workspace !== null ) {
+    dom = Blockly.Xml.workspaceToDom(App.workspace);
+    // undostack = App.workspace.undoStack_;
+    // redostack = App.workspace.redoStack_;
+    // App.log("workspace.undoStack_ = "+undostack);
+  }
+
+  // Remove existing Blockly translations
+  //
+  delete Blockly.Msg.fr;
+  delete Blockly.Msg.en;
+
+  // Install a new Blockly workspace
+  //
+  App.createWorkspace();
+
+  // Restore original blocks and undo/redo stacks
+  //
+  if ( dom !== null ) {
+    Blockly.Xml.domToWorkspace( dom, App.workspace );
+    // App.workspace.undoStack_ = undostack;
+    // App.workspace.redoStack_ = redostack;
+  }
+  else
+    App.restoreSession();
+
+  App.layout();
+};
+
+
+App.init();

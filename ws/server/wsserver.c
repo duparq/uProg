@@ -35,6 +35,7 @@ static void	sendFrame ( int socket );
 static void	framePrintf ( char *msg, ... );
 static void	sendTextFrame ( int socket, char *msg, ...);
 static void	sendBinaryFrame ( int socket, const char *data, uint16_t len );
+/* static void	serialClose ( ); */
 
 #ifdef WIN32
 #  include "wsserver-win32.c"
@@ -213,22 +214,24 @@ static void onMessage ( int socket, char *data )
   /* } */
   else if ( !strcmp( data, "SERIALS" ) ) {
     /*
-     *  List of serial ports
+     *  List available serial ports
+     *
+     *    SERIALS
      */
     prn( 3, "SERIALS\n" );
     listserials( socket );
     return ;
   }
-  else if ( !strncmp( data, "OPEN ", 5 ) ) {
+  else if ( !strncmp( data, "SERIAL ", 6 ) ) {
     /*
-     *    <OPEN> <PORTNAME> <BAUDRATE>
+     *    SERIAL [<PORTNAME> [<BAUDRATE>]]
      */
     char *portname ;
     char *p ;
 
     /*  Get serial name
      */
-    portname = data+5 ;
+    portname = data+6 ;
     p = strchr( portname, ' ' );
     if ( p == 0 ) {
       //sendTextFrame( socket, "ERROR PORTNAME" );
@@ -766,8 +769,8 @@ int main ( int ac, char** av )
 	    break ;
 	  }
 	}
-      }
 #endif
+      }
     }
 #endif
   }

@@ -6,7 +6,8 @@
     <link rel="stylesheet" href="index.css">
     <link rel="stylesheet" href="topbar.css">
     <link rel="stylesheet" href="window.css">
-    <link rel="stylesheet" href="zdebugger.css">
+    <link rel="stylesheet" href="source.css">
+    <link rel="stylesheet" href="logger.css">
     <link rel="stylesheet" href="cpu/cpu.css">
     <link rel="stylesheet" href="hw/hw.css">
     <link rel="stylesheet" href="memory/memory.css">
@@ -20,46 +21,26 @@
       <img id="icon-file-upload" class="icon" src="icons/file-upload.svg"></img>
       <img id="icon-file-download" class="icon" src="icons/file-download.svg"></img>
       <img id="trashIcon" class="icon disabled" src="icons/trash.svg"></img>
-      <img id="consoleIcon" class="icon" src="icons/console.svg"></img>
-      <img id="codeIcon" class="icon" src="icons/code.svg"></img>
-      <img id="zdebuggerIcon" class="icon" src="icons/zdebugger.svg"></img>
-      <!-- <img id="hwIcon" class="icon" src="hw/icon.svg"></img> -->
       <select id="language"></select>
     </div>
 
-    <!-- Code area
+    <!-- Blockly workspace
       -->
     <div id="codeArea">
-      <!-- Blockly workspace
-	-->
       <div id="blocklyDiv"></div>
-
-      <!-- Generated code
-	-->
-      <div id="codeSplitter"></div>
-      <div id="codeDiv"></div>
     </div>
 
-    <!-- Simulator window
+    <!-- Source window
       -->
-    <div id="zdebuggerWindow">
-      <div id="zdebuggerWindowBar">
-	<span id="zdebuggerWindowName"></span>
-	<img id="zdebuggerWindowClose" src="icons/delete.svg"></img>
+    <div id="source" class="window resizable">
+      <div class="bar">
+    	<img class="btn plus" src="icons/plus.svg"></img>
+    	<img class="btn minus" src="icons/minus.svg"></img>
+    	<span class="name"></span>
       </div>
-      <div id="zdebuggerIcons">
-	<img id="zdebuggerPlayIcon" class="icon" src="icons/play.svg"></img>
-	<img id="zdebuggerPauseIcon" class="icon" src="icons/pause.svg"></img>
-	<img id="zdebuggerStopIcon" class="icon" src="icons/stop.svg"></img>
-	<img id="zdebuggerStepIcon" class="icon" src="icons/step.svg"></img>
-	<input id="zdebuggerSpeedRange" type="range" min="0" max="10" step="1" value="8">
-	<span id="zdebuggerSpeedSpan"></span>
-	<!-- <button id="zdebuggerQuit">Quit</button> -->
+      <div id="sourceDiv" class="content">
       </div>
-      <div id="zdebuggerMonitoringDiv">
-	<span id="zdebuggerMonitoringLabel"></span>
-	<div id="zdebuggerMonitors"></div>
-      </div>
+      <img class="resizer" src="icons/resizer.svg"></img>
     </div>
 
     <!-- CPU window
@@ -71,12 +52,14 @@
     	<span class="name"></span>
       </div>
       <div class="content">
-	  <img id="cpuPlayIcon" class="icon" src="cpu/play.svg"></img>
-	  <img id="cpuPauseIcon" class="icon" src="cpu/pause.svg"></img>
-	  <img id="cpuStopIcon" class="icon" src="cpu/stop.svg"></img>
-	  <img id="cpuStepIcon" class="icon" src="cpu/next.svg"></img>
-	  <input id="cpuSpeedRange" type="range" min="0" max="10" step="1" value="8">
-	  <span id="cpuSpeedSpan"></span>
+	  <img id="cpuResetBtn" class="btn" src="cpu/reset.svg"></img>
+	  <img id="cpuPlayBtn" class="btn" src="cpu/play.svg"></img>
+	  <img id="cpuPauseBtn" class="btn" src="cpu/pause.svg"></img>
+	  <img id="cpuStepBtn" class="btn" src="cpu/next.svg"></img>
+	  <div id="cpuSpeed">
+	    <input id="cpuSpeedRange" type="range" min="0" max="10" step="1" value="8">
+	    <span id="cpuSpeedSpan"></span>
+	  </div>
       </div>
     </div>
 
@@ -94,19 +77,37 @@
 
     <!-- Hardware window
       -->
-    <div id="hw" class="window">
+    <div id="hw" class="window resizable">
+      <div class="bar">
+    	<img class="btn plus" src="icons/plus.svg"></img>
+    	<img class="btn minus" src="icons/minus.svg"></img>
+    	<span class="name"></span>
+	<div class="right">
+    	  <img class="btn connect" src="icons/connect.svg"></img>
+    	  <img class="btn config" src="icons/star.svg"></img>
+	</div>
+      </div>
+      <div class="content">
+	<div class="config">
+	  <span>Target:</span>
+	  <select class="targets"></select>
+	</div>
+	<svg></svg>
+      </div>
+      <img class="resizer" src="icons/resizer.svg"></img>
+    </div>
+
+    <!-- Console
+      -->
+    <div id="logger" class="window resizable">
       <div class="bar">
     	<img class="btn plus" src="icons/plus.svg"></img>
     	<img class="btn minus" src="icons/minus.svg"></img>
     	<span class="name"></span>
       </div>
-      <div class="content"></div>
+      <div class="content" id="consoleDiv"></div>
+      <img class="resizer" src="icons/resizer.svg"></img>
     </div>
-
-    <!-- Console
-      -->
-    <div id="consoleSplitter"></div>
-    <pre id="consoleDiv">-- Messages --<br></pre>
 
     <!-- Modal content
       -->
@@ -122,6 +123,7 @@
 
     <xml id="toolbox" style="display: none">
       <category id="catStructures" colour="290">
+	<block type="uprog_start"></block>
 	<block type="procedures_defnoreturn"></block>
 	<block type="procedures_defreturn"></block>
 	<block type="controls_if"></block>
@@ -177,13 +179,16 @@
 	<block type="uprog_pause"></block>
       </category>
       <category id="catVariables" colour="330">
-      	<block type="uprog_setvar"></block>
+      	<!-- <block type="uprog_setvar"></block> -->
       	<!-- <block type="variables_set"></block> -->
-      	<block type="variables_get"></block>
+      	<block type="uprog_var_get"></block>
+      	<block type="uprog_var_set"></block>
       	<block type="math_number"></block>
       </category>
       <category id="catIO" colour="60">
-	<block type="text_print"></block>
+	<!-- <block type="text_print"></block> -->
+	<block type="uprog_io_get"></block>
+	<block type="uprog_io_set"></block>
       </category>
     </xml>
 
@@ -191,20 +196,6 @@
       -->
     <script src="blockly/blockly_compressed.js"></script>
     <script src="blockly/blocks_compressed.js"></script>
-    <!-- <script src="blockly/msg/js/en.js"></script> -->
-
-    <!-- <script src="blockly/blockly_uncompressed.js"></script> -->
-
-    <!-- <script src="blockly/blocks/logic.js"></script> -->
-    <!-- <script src="blockly/blocks/loops.js"></script> -->
-    <!-- <script src="blockly/blocks/math.js"></script> -->
-    <!-- <script src="blockly/blocks/text.js"></script> -->
-    <!-- <script src="blockly/blocks/variables.js"></script> -->
-    <!-- <script src="blockly/blocks/procedures.js"></script> -->
-
-    <!-- <script src="blockly/messages.js"></script> -->
-    <!-- <script src="blockly/msg/js/en.js"></script> -->
-    <!-- <script src="blockly/msg/js/fr.js"></script> -->
 
     <!-- Javascript generator & prettifier
       -->
@@ -221,28 +212,34 @@
 
     <!-- Overloaded Blockly scripts
       -->
-    <script src="blockly/core/field_dropdown.js"></script>
-    <script src="blockly/core/field_variable.js"></script>
+    <!-- <script src="blockly/core/field_dropdown.js"></script> -->
+    <!-- <script src="blockly/core/field_variable.js"></script> -->
 
     <!-- Original uProg blocks
       -->
-    <script src="blocks/setvar.js"></script>
+    <script src="blocks/start.js"></script>
+    <script src="blocks/var.js"></script>
     <!-- <script src="blocks/variable_set.js"></script> -->
     <script src="blocks/procedure.js"></script>
     <script src="blocks/pause.js"></script>
     <script src="blocks/while.js"></script>
     <script src="blocks/break.js"></script>
     <script src="blocks/continue.js"></script>
+    <script src="core/field_io.js"></script>
+    <script src="blocks/io.js"></script>
 
     <script src="log.js"></script>
     <script src="FileSaver.js"></script>
     <!-- <script src="file.js"></script> -->
 
     <script src="blockly/demos/interpreter/acorn_interpreter.js"></script>
-    <script src="zdebugger.js"></script>
 
     <script src="window.js"></script>
+    <script src="source.js"></script>    
+    <script src="logger.js"></script>    
+    <script src="hw/dil.js"></script>
     <script src="hw/hw.js"></script>
+    <script src="hw/ATtinyX4.js"></script>
     <script src="cpu/cpu.js"></script>
     <script src="memory/memory.js"></script>
 

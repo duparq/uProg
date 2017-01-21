@@ -12,29 +12,61 @@
 'use strict';
 
 
+//  Default position for windows
+//
+var windowx = 250 ;
+var windowy = 14 ;
+
+
 function windowSetup ( obj ) {
-  obj.window = document.getElementById(obj.id);
-  obj.window.obj = obj ;
-  obj.window.bar = obj.window.getElementsByClassName('bar')[0];
-  obj.window.bar.onmousedown = function(e){windowOnBarMouseDown(obj.window,e);} ;
-  obj.window.bar.onmouseup = function(e){windowOnBarMouseUp(obj.window,e);} ;
-  obj.window.name = obj.window.bar.getElementsByClassName('name')[0];
-  obj.window.plus = obj.window.bar.querySelector('.plus');
-  obj.window.plus.onmousedown = function(e){ e.stopPropagation(); }
-  obj.window.plus.onmouseup = function(e){ e.stopPropagation(); }
-  obj.window.plus.onclick = function(e){ windowOnClick(obj.window,e);} ;
-  obj.window.minus = obj.window.bar.querySelector('.minus');
-  obj.window.minus.onmousedown = function(e){ e.stopPropagation(); }
-  obj.window.minus.onmouseup = function(e){ e.stopPropagation(); }
-  obj.window.minus.onclick = function(e){ windowOnClick(obj.window,e);} ;
-  obj.window.content = obj.window.getElementsByClassName('content')[0];
+  var w = document.getElementById(obj.id);
+  obj.window = w ;
+  w.obj = obj ;
+  w.onclick = function(e){ windowPutOnTop(w);} ;
+  w.bar = w.getElementsByClassName('bar')[0];
+  w.bar.onmousedown = function(e){windowOnBarMouseDown(w,e);} ;
+  w.bar.onmouseup = function(e){windowOnBarMouseUp(w,e);} ;
+  w.name = w.bar.getElementsByClassName('name')[0];
+  w.plus = w.bar.querySelector('.plus');
+  if ( w.plus ) {
+    w.plus.onmousedown = function(e){ e.stopPropagation(); }
+    w.plus.onmouseup = function(e){ e.stopPropagation(); }
+    w.plus.onclick = function(e){ windowToggleDisplay(w,e);} ;
+  }
+  w.minus = w.bar.querySelector('.minus');
+  if ( w.minus ) {
+    w.minus.onmousedown = function(e){ e.stopPropagation(); }
+    w.minus.onmouseup = function(e){ e.stopPropagation(); }
+    w.minus.onclick = function(e){ windowToggleDisplay(w,e);} ;
+  }
+  w.content = w.getElementsByClassName('content')[0];
 
+  //  Resizable window?
+  //
+  if ( w.classList.contains('resizable') ) {
+    w.resizer = w.getElementsByClassName('resizer')[0];
+    w.resizer.onmousedown = function(e){windowOnResizerMouseDown(w,e);} ;
+    w.resizer.onmouseup = function(e){windowOnResizerMouseUp(w,e);} ;
+  }
+
+  //  Default window size and position
+  //
+  w.style.left = windowx+'px'; 
+  w.style.top = windowy+'px'; windowy += 25 ;
+  if ( w.classList.contains('resizable') ) {
+    w.content.style.width = '100px';
+    w.content.style.height = '100px';
+  }
+
+  //  Handle session backup/restore if the object does not do that itself
+  //
   if ( !obj.restoreSession )
-    obj.restoreSession = function(storage){ windowRestoreSession(storage, obj.window); };
-  if ( !obj.saveSession )
-    obj.saveSession = function(storage){ windowSaveSession( storage, obj.window, {}); };
+    obj.restoreSession = function(storage){ windowRestoreSession(storage, w); };
 
-  windowSetDisplay( obj.window, false );
+  if ( !obj.saveSession )
+    obj.saveSession = function(storage){ windowSaveSession( storage, w, {}); };
+
+  windowSetDisplay( w, false );
 };
 
 
@@ -45,6 +77,10 @@ function windowRestoreSession ( storage, w )
     var dic = JSON.parse(json);
     w.style.left = dic.x+'px';
     w.style.top = dic.y+'px';
+    if ( w.classList.contains('resizable') ) {
+      w.content.style.width = dic.w+'px';
+      w.content.style.height = dic.h+'px';
+    }
     windowSetDisplay( w, dic.d );
   }
   return dic ;
@@ -54,9 +90,15 @@ function windowRestoreSession ( storage, w )
 function windowSaveSession( storage, w, dic )
 {
   //var w = document.getElementById( w.id );
-  var style = window.getComputedStyle( w );
+  var style ;
+  style = window.getComputedStyle( w );
   dic.x = parseInt(style.left, 10);
   dic.y = parseInt(style.top, 10);
+  if ( w.classList.contains('resizable') ) {
+    style = window.getComputedStyle( w.content );
+    dic.w = parseInt(style.width, 10);
+    dic.h = parseInt(style.height, 10);
+  }
   dic.d = w.content.classList.contains('visible');
   storage[w.id] = JSON.stringify(dic);
 }
@@ -65,13 +107,17 @@ function windowSaveSession( storage, w, dic )
 function windowSetDisplay ( w, x )
 {
   if ( x ) {
-    w.plus.style.display = "none";
-    w.minus.style.display = "block";
+    if ( w.plus )
+      w.plus.style.display = "none";
+    if ( w.minus )
+      w.minus.style.display = "block";
     w.content.classList.add('visible');
   }
   else {
-    w.plus.style.display = "block";
-    w.minus.style.display = "none";
+    if ( w.plus )
+      w.plus.style.display = "block";
+    if ( w.minus )
+      w.minus.style.display = "none";
     w.content.classList.remove('visible');
   }
   if ( w.obj.onDisplay )
@@ -79,7 +125,7 @@ function windowSetDisplay ( w, x )
 }
 
 
-function windowOnClick ( w, e )
+function windowToggleDisplay ( w, e )
 {
   if ( w.content.classList.contains('visible') )
     windowSetDisplay( w, false );
@@ -89,11 +135,23 @@ function windowOnClick ( w, e )
 }
 
 
-//  Window: move
+//  Put window on top of others (displayed last)
+//
+function windowPutOnTop ( w )
+{
+  document.body.removeChild( w );
+  document.body.appendChild( w );
+}
+
+
+//  Move a window
 //
 function windowOnBarMouseDown ( w, e )
 {
   e.preventDefault();
+
+  windowPutOnTop( w );
+
   App.setCapture(w.bar);
   var ex0 = e.clientX ;
   var ey0 = e.clientY ;
@@ -135,4 +193,35 @@ function windowOnBarMouseUp ( w, e )
   w.bar.onmousemove = null ;
   App.setCapture(null);
   App.sessionIsDirty = true ;
+};
+
+
+//  Resize the window by resizing its content
+//
+function windowOnResizerMouseDown ( w, e )
+{
+  e.preventDefault();
+  App.setCapture(w.resizer);
+  var ex0 = e.clientX ;
+  var ey0 = e.clientY ;
+  var ww0 = parseInt(window.getComputedStyle(w.content).width);
+  var wh0 = parseInt(window.getComputedStyle(w.content).height);
+  App.sessionIsDirty = true ;
+
+  w.resizer.onmousemove = function ( e ) {
+    var ex = e.clientX ;
+    var ey = e.clientY ;
+    w.content.style.width = (ww0 + ex - ex0)+'px';
+    w.content.style.height = (wh0 + ey - ey0)+'px';
+
+    e.preventDefault();
+  }
+};
+
+
+function windowOnResizerMouseUp ( w, e )
+{
+  e.preventDefault();
+  w.resizer.onmousemove = null ;
+  App.setCapture(null);
 };

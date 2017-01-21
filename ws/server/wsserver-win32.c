@@ -266,6 +266,15 @@ static void serialOpen ( int socket, const char *portname, uint32_t baudrate )
 }
 
 
+static void serialClose ( )
+{
+  if ( sid != INVALID_HANDLE_VALUE ) {
+    CloseHandle( sid );
+    sid = INVALID_HANDLE_VALUE ;
+  }
+}
+
+
 static void details ( int socket, const char *portname )
 {
   /* Description limited to 127 char, anything longer

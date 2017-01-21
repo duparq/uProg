@@ -1,0 +1,108 @@
+<?xml-stylesheet type="text/css" href="hw2.css" ?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 0 280 600">
+  <!-- <rect x="-10" y="0" width="280" height="600" fill="#fff" /> -->
+  <g class="device">
+    <g id="package" class="device">
+      <rect class="_pin" x="0" y="40" width="20" height="40" />
+      <rect class="_pin" x="0" y="120" width="20" height="40" />
+      <rect class="_pin" x="0" y="200" width="20" height="40" />
+      <rect class="_pin" x="0" y="280" width="20" height="40" />
+      <rect class="_pin" x="0" y="360" width="20" height="40" />
+      <rect class="_pin" x="0" y="440" width="20" height="40" />
+      <rect class="_pin" x="0" y="520" width="20" height="40" />
+
+      <rect class="_pin" x="240" y="520" width="20" height="40" />
+      <rect class="_pin" x="240" y="440" width="20" height="40" />
+      <rect class="_pin" x="240" y="360" width="20" height="40" />
+      <rect class="_pin" x="240" y="280" width="20" height="40" />
+      <rect class="_pin" x="240" y="200" width="20" height="40" />
+      <rect class="_pin" x="240" y="120" width="20" height="40" />
+      <rect class="_pin" x="240" y="40" width="20" height="40" />
+
+      <rect class="package" x="20" y="10" width="220" height="580" rx="5" ry="5" />
+      <circle class="notch" cx="40" cy="30" r="10" />
+    </g>
+
+    <text class="devName" x="120" y="300" transform="rotate(90 120 300)">
+      ATtiny44
+    </text>
+
+    <text class="pinName" x="30" y="70">VCC</text>
+
+    <!-- <g class="pin" id="2"> -->
+    <!--   <text x="30" y="150">PB0</text> -->
+    <!--   <rect x="0" y="120" width="10" height="40" /> -->
+    <!--   <rect class="pad" x="-10" y="110" width="80" height="60" /> -->
+    <!-- </g> -->
+    <text class="pinName" x="30" y="150">UART</text>
+
+    <g class="pin" id="3">
+      <text x="30" y="230">PB1</text>
+      <rect x="0" y="200" width="10" height="40" />
+      <rect class="pad" x="-10" y="190" width="80" height="60" />
+    </g>
+
+    <!-- <g class="pin" id="4"> -->
+    <!--   <text x="30" y="310">PB3</text> -->
+    <!--   <rect x="0" y="280" width="10" height="40" /> -->
+    <!--   <rect class="pad" x="-10" y="270" width="80" height="60" /> -->
+    <!-- </g> -->
+    <text class="pinName" x="30" y="310">RESET</text>
+
+    <g class="pin" id="5">
+      <text x="30" y="390">PB2</text>
+      <rect x="0" y="360" width="10" height="40" />
+      <rect class="pad" x="-10" y="350" width="80" height="60" />
+    </g>
+
+    <g class="pin" id="6">
+      <text x="30" y="470">PA7</text>
+      <rect x="0" y="440" width="10" height="40" />
+      <rect class="pad" x="-10" y="430" width="80" height="60" />
+    </g>
+
+    <g class="pin" id="7">
+      <text x="30" y="550">PA6</text>
+      <rect x="0" y="520" width="10" height="40" />
+      <rect class="pad" x="-10" y="510" width="80" height="60" />
+    </g>
+
+    <g class="pin right" id="8">
+      <text x="230" y="550">PA5</text>
+      <rect x="250" y="520" width="10" height="40" />
+      <rect class="pad" x="190" y="510" width="80" height="60" />
+    </g>
+
+    <g class="pin right" id="9">
+      <text x="230" y="470">PA4</text>
+      <rect x="250" y="440" width="10" height="40" />
+      <rect class="pad" x="190" y="430" width="80" height="60" />
+    </g>
+
+    <g class="pin right" id="10">
+      <text x="230" y="390">PA3</text>
+      <rect x="250" y="360" width="10" height="40" />
+      <rect class="pad" x="190" y="350" width="80" height="60" />
+    </g>
+    
+    <g class="pin right" id="11">
+      <text x="230" y="310">PA2</text>
+      <rect x="250" y="280" width="10" height="40" />
+      <rect class="pad" x="190" y="270" width="80" height="60" />
+    </g>
+
+    <g class="pin right" id="12">
+      <text x="230" y="230">PA1</text>
+      <rect x="250" y="200" width="10" height="40" />
+      <rect class="pad" x="190" y="190" width="80" height="60" />
+    </g>
+
+    <g class="pin right" id="13">
+      <text x="230" y="150">PA0</text>
+      <rect x="250" y="120" width="10" height="40" />
+      <rect class="pad" x="190" y="110" width="80" height="60" />
+    </g>
+
+    <text class="pinName right" x="230" y="70">GND</text>
+  </g>
+</svg>

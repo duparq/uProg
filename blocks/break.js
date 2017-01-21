@@ -4,20 +4,18 @@ Blockly.Blocks['uprog_break'] = {
     this.setColour(Blockly.Blocks.loops.HUE);
     this.setPreviousStatement(true);
     this.setNextStatement(true);
-    var x = this.appendDummyInput();
-    this.i18n();
-  },
-  i18n: function() {
+    // var x = this.appendDummyInput();
     if ( App.language === 'fr' ) {
       //this.setHelpUrl(Blockly.Msg.CONTROLS_FLOW_STATEMENTS_HELPURL);
-      x.appendField("SORTIR");
+      this.appendDummyInput().appendField("SORTIR");
       this.setTooltip("Sort de la boucle.");
     }
     else {
-      x.appendField("BREAK");
+      this.appendDummyInput().appendField("BREAK");
       this.setTooltip("Break out of loop.");
     }
-  }
+  },
+  i18n: function() {}
 };
 
 

@@ -6,11 +6,21 @@
     border: 2px solid #ccc;
     cursor: default;
 
+    z-index: 2;
     /* resize: both; */
     /* min-width: 50px; */
     /* min-height: 50px; */
     /* overflow: auto; */
 }
+
+.window .content.visible {
+    display: block;
+}
+
+/* .window.resizable { */
+/*     resize: both; */
+/*     overflow: hidden; */
+/* } */
 
 .window > .bar {
     height: 1.1em;
@@ -23,7 +33,7 @@
     cursor: move;
 }
 
-.window > .bar > .btn {
+.window > .bar .btn {
     height: 1em;
     cursor: pointer;
 }
@@ -49,4 +59,16 @@
 
     /* resize: both; */
     /* overflow: auto; */
+}
+
+.window .resizer {
+    height: 12px;
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+    cursor: se-resize;
+}
+
+.window.dialog {
+    display: none;
 }

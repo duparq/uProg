@@ -14,51 +14,71 @@
 
 var cpu = {};
 
-//cpu.x_open = false;
-cpu.x_running = false;
-cpu.x_showsteps = true;
-cpu.x_pause = false ;
-cpu.x_milestone = false ;
-cpu.x_generate = false ;
-//cpu.x_resetMonitors = false ;
-cpu.interpreter = null;
-cpu.timeoutId = null;
-
-cpu.speeds = [ 0, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000 ];
-cpu.speed = 8 ; // Integer required!
-cpu.pauseMS = cpu.speeds[cpu.speed];
-cpu.wrapped_pause = 0 ;
-
 
 /*  Initialize UI elements
  */
 cpu.setup = function ( )
 {
+  cpu.x_run = false;
+  cpu.x_generate = false ;
+  cpu.interpreter = null;
+  cpu.timeoutId = null;
+  cpu.milestone_id = null ;
+
+  cpu.speeds = [ 0, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000 ];
+  cpu.speed = 8 ; // Integer required!
+  cpu.stepDelay = cpu.speeds[cpu.speed];
+  cpu.wrapped_pause = 0 ;
+
+  // App.log("cpu.setup");
   this.id = 'cpu' ;
   windowSetup( this );
-  this.i18n();
 
-  cpu.playIcon = document.getElementById("cpuPlayIcon");
-  cpu.playIcon.onclick = cpu.play;
-  cpu.pauseIcon = document.getElementById("cpuPauseIcon");
-  cpu.pauseIcon.onclick = cpu.pause;
-  cpu.stopIcon = document.getElementById("cpuStopIcon");
-  cpu.stopIcon.onclick = cpu.stop;
-  cpu.stepIcon = document.getElementById("cpuStepIcon");
-  cpu.stepIcon.onclick = cpu.step;
+  cpu.resetBtn = document.getElementById("cpuResetBtn");
+  cpu.resetBtn.onclick = cpu.reset;
+  cpu.playBtn = document.getElementById("cpuPlayBtn");
+  cpu.playBtn.onclick = cpu.play;
+  cpu.pauseBtn = document.getElementById("cpuPauseBtn");
+  cpu.pauseBtn.onclick = cpu.pause;
+  cpu.stepBtn = document.getElementById("cpuStepBtn");
+  cpu.stepBtn.onclick = cpu.run;
+  cpu.speedDiv = document.getElementById("cpuSpeed");
   cpu.speedRange = document.getElementById("cpuSpeedRange");
   cpu.speedRange.oninput = cpu.oninput ;
   cpu.speedRange.addEventListener("wheel", cpu.onwheel);
   cpu.speedRange.value = cpu.speed ;
   cpu.speedSpan = document.getElementById("cpuSpeedSpan");
-//  cpu.variablesDiv = document.getElementById("cpuMonitors");
 
   cpu.speedChanged();
 
   /*  Reserved words
    */
-  Blockly.JavaScript.addReservedWords('__block__,__monitor__,__pause__');
+  Blockly.JavaScript.addReservedWords('__block__,__monitor__,__pause__,__hw_write_io__');
 };
+
+
+//  Load/Save session info
+//
+cpu.saveSession = function ( storage )
+{
+  // App.log("cpu.saveSession");
+  windowSaveSession( storage, cpu.window,
+		     {'speed': cpu.speed});
+}
+
+cpu.restoreSession = function ( storage )
+{
+  // App.log("cpu.restoreSession");
+  var dic = windowRestoreSession( storage, cpu.window );
+  // App.log("  "+dic.speed);
+  if ( dic.speed >= 0 && dic.speed < cpu.speeds.length ) {
+    cpu.speed = dic.speed ;
+    cpu.speedRange.value = cpu.speed;
+    cpu.speedChanged();
+  }
+  else
+    cpu.speed = 8;
+}
 
 
 //  Change language
@@ -66,10 +86,20 @@ cpu.setup = function ( )
 cpu.i18n = function ( )
 {
   if ( App.language === 'fr' ) {
-    this.window.name.innerHTML = "Processeur";
+    cpu.window.name.innerHTML = "Processeur";
+    cpu.resetBtn.title = "Réinitialise le processeur." ;
+    cpu.playBtn.title = "Exécute la suite du programme." ;
+    cpu.pauseBtn.title = "Suspend l'exécution." ;
+    cpu.stepBtn.title = "Exécute seulement l'instruction surlignée." ;
+    cpu.speedDiv.title = "Délai minimum entre deux instructions.";
   }
   else {
-    this.window.name.innerHTML = "Processor";
+    cpu.window.name.innerHTML = "Processor";
+    cpu.resetBtn.title = "Reset the processor." ;
+    cpu.playBtn.title = "Run the program." ;
+    cpu.pauseBtn.title = "Suspend execution." ;
+    cpu.stepBtn.title = "Execute only the highlighted instruction." ;
+    cpu.speedDiv.title = "Minimal delay between two instructions.";
   }
 };
 
@@ -86,25 +116,22 @@ cpu.oninput = function ( e )
 cpu.onwheel = function ( e )
 {
   e.preventDefault();
-  //App.log('OnWheel dx:'+e.deltaX+' dy:'+e.deltaY+' dz:'+e.deltaZ);
-  if ( e.deltaY < 0 && cpu.speed > 0 )
+  if ( e.deltaY > 0 && cpu.speed > 0 )
     cpu.speed-- ;
-  else if ( e.deltaY > 0 && cpu.speed < cpu.speeds.length-1 )
+  else if ( e.deltaY < 0 && cpu.speed < cpu.speeds.length-1 )
     cpu.speed++ ;
   cpu.speedRange.value = cpu.speed;
   cpu.speedChanged();
 };
 
+
 cpu.speedChanged = function ( )
 {
-  cpu.pauseMS = cpu.speeds[cpu.speed];
-  if ( cpu.speed == 0 ) {
-    App.workspace.highlightBlock(null);
-    cpu.x_showsteps = false;
-  }
-  else
-    cpu.x_showsteps = true;
-  cpu.speedSpan.innerHTML = cpu.pauseMS+' ms';
+  // App.log("cpu.speedChanged");
+  cpu.stepDelay = cpu.speeds[cpu.speed];
+  // App.log("  "+cpu.stepDelay);
+  cpu.speedSpan.innerHTML = cpu.stepDelay+' ms';
+  App.sessionIsDirty = true ;
 };
 
 
@@ -112,24 +139,14 @@ cpu.speedChanged = function ( )
 //
 cpu.onDisplay = function ( )
 {
-//  App.log("cpu.onDisplay");
-
   if ( cpu.window.content.classList.contains('visible') ) {
     cpu.x_open = true ;
-    cpu.playIcon.classList.remove('disabled');
-    cpu.pauseIcon.classList.add('disabled');
-    cpu.stopIcon.classList.add('disabled');
-    cpu.stepIcon.classList.remove('disabled');
-
-    //    cpu.updateMonitors();
     cpu.reset();
   }
   else {
     if ( App.workspace ) {
-      App.workspace.highlightBlock(null);
+      // App.workspace.highlightBlock(null);
       cpu.interpreter = null ;
-      // cpu.window.style.display = "none";
-//      cpu.x_open = false ;
     }
   }
 };
@@ -139,167 +156,136 @@ cpu.onDisplay = function ( )
  */
 cpu.reset = function ( )
 {
-//  App.log("cpu.reset");
-  // if ( !cpu.x_open )
-  //   return;
+  cpu.milestone_id = null;
+  window.clearTimeout(cpu.timeoutId);
+  cpu.x_run = false ;
+  // App.workspace.highlightBlock(null);
+  //  App.workspace.traceOn(true);
 
-  // if ( !cpu.window.content.classList.contains('visible') )
-  //   return ;
+  cpu.playBtn.style.display = "block";
+  cpu.playBtn.classList.remove('disabled');
+  cpu.playBtn.onclick = cpu.play;
+  cpu.pauseBtn.style.display = "none";
+  cpu.stepBtn.classList.remove('disabled');
+  cpu.stepBtn.onclick = cpu.run;
 
-  cpu.playIcon.style.display = "block";
-  cpu.pauseIcon.style.display = "none";
-  
+  if ( memory )
+    memory.reset();
+
   cpu.x_generate = true ;
   Blockly.JavaScript.STATEMENT_PREFIX = '__block__(%1);\n';
   cpu.code = Blockly.JavaScript.workspaceToCode(App.workspace);
-
-  cpu.interpreter = new Interpreter(cpu.code, cpu.initApi);
-  App.workspace.traceOn(true);
-  cpu.next();
-//  cpu.x_resetMonitors = true ;
+  cpu.x_generate = false ;
+  if ( cpu.code ) {
+    cpu.interpreter = new Interpreter(cpu.code, cpu.initWrappers);
+    // App.workspace.highlightBlock(null);
+    App.workspace.traceOn(true);
+    cpu.run();
+  }
 };
 
 
 cpu.play = function ( )
 {
-  cpu.playIcon.style.display = "none";
-  cpu.pauseIcon.style.display = "block";
+  cpu.playBtn.style.display = "none";
+  cpu.pauseBtn.style.display = "block";
+  cpu.pauseBtn.onclick = cpu.pause;
+  cpu.stepBtn.classList.add('disabled');
+  cpu.stepBtn.onclick = null;
 
-  cpu.playIcon.classList.add('disabled');
-  cpu.pauseIcon.classList.remove('disabled');
-  cpu.stopIcon.classList.remove('disabled');
-  cpu.stepIcon.classList.add('disabled');
-
-  //App.log(App.MSG.DEBUGGER_STARTED+' ('+cpu.pauseMS+' ms)');
-  cpu.x_running = true ;
-  cpu.next();
+  App.workspace.highlightBlock(null);
+//  App.workspace.traceOn(false);
+  cpu.x_run = true ;
+  cpu.run();
 };
 
 
 cpu.pause = function ( )
 {
+  App.workspace.traceOn(true);
   window.clearTimeout(cpu.timeoutId);
-  cpu.timeoutId = null ;
-  cpu.x_running = false ;
-  cpu.playIcon.classList.remove('disabled');
-  cpu.pauseIcon.classList.add('disabled');
-  cpu.stepIcon.classList.remove('disabled');
-
-  cpu.playIcon.style.display = "block";
-  cpu.pauseIcon.style.display = "none";
-};
-
-
-cpu.stop = function ( )
-{
-  if ( cpu.stopIcon.classList.contains('disabled') )
-    return ;
-
-  window.clearTimeout(cpu.timeoutId);
-  cpu.interpreter = null ;
-  cpu.x_running = false ;
-  App.workspace.highlightBlock(null);
-  cpu.playIcon.classList.remove('disabled');
-  cpu.pauseIcon.classList.add('disabled');
-  cpu.stopIcon.classList.remove('disabled');
-  cpu.stepIcon.classList.remove('disabled');
-  //App.log(App.MSG.DEBUGGER_DONE);
-  //cpu.variables = {};
-
-  cpu.reset();
-};
-
-
-cpu.step = function ( )
-{
-  //App.log("cpu.step");
-  if ( cpu.stepIcon.classList.contains('disabled') )
-    return ;
-
-  cpu.stopIcon.classList.remove('disabled');
-  cpu.x_running = false;
-  cpu.next();
+  cpu.timeoutId = 0 ;
+  cpu.x_run = false ;
+  cpu.playBtn.style.display = "block";
+  cpu.pauseBtn.style.display = "none";
+  cpu.stepBtn.classList.remove('disabled');
+  cpu.stepBtn.onclick = cpu.run;
 };
 
 
 /*  Interprete next statement
  */
-cpu.next = function ( )
+cpu.run = function ( )
 {
-
-  // if ( cpu.x_resetMonitors ) {
-  //   cpu.x_resetMonitors = false ;
-  //   for( var key in cpu.monitors ) {
-  //     cpu.monitors[key].value = undefined;
-  //     cpu.monitors[key].span.innerHTML = 'undefined';
-  //   }
-  // }
-
-  //App.log("cpu.next");
-  if ( cpu.interpreter ) {
+  // App.log("cpu.run");
+  while ( true ) {
+    // App.log("  step");
     try {
       var ok = cpu.interpreter.step();
-    } finally {
-      if (!ok)
-	cpu.interpreter = null ;
     }
-  }
+    finally {
+      if (!ok)
+	break ;
+    }
 
-  if ( cpu.interpreter === null ) {
-    /*
-     *  Execution completed
-     */
-    //App.log(App.MSG.DEBUGGER_DONE);
-    App.workspace.highlightBlock(null);
-    // App.workspace.readOnly = false ; // No effect
-    cpu.playIcon.classList.remove('disabled');
-    cpu.pauseIcon.classList.add('disabled');
-    cpu.stopIcon.classList.add('disabled');
-    cpu.stepIcon.classList.remove('disabled');
-    cpu.x_running = false;
-    cpu.reset();
-    return ;
-  }
+    //  Run at maximum speed until next milestone
+    //
+    if ( cpu.milestone_id == 0 )
+      continue ;
 
-  if ( cpu.x_running && cpu.wrapped_pause ) {
-//    console.log("manage pause");
-    cpu.timeoutId = window.setTimeout( function(){cpu.next();},
-					     cpu.wrapped_pause );
-    cpu.wrapped_pause = 0 ;
-    return ;
-  }
-
-  if ( cpu.x_milestone ) {
-    cpu.x_milestone = false ;
-    if ( !cpu.x_running )
+    if ( cpu.x_run == false ) {
+      App.workspace.highlightBlock( cpu.milestone_id );
+      cpu.milestone_id = 0 ;
       return ;
-    cpu.timeoutId = window.setTimeout( function(){cpu.next();},
-					     cpu.pauseMS );
-    return ;
+    }
+
+    var delay = cpu.speeds[cpu.speed];
+    if ( cpu.wrapped_pause ) {
+      if ( cpu.wrapped_pause > delay ) {
+	delay = cpu.wrapped_pause ;
+      }
+      cpu.wrapped_pause = 0 ;
+    }
+
+    if ( delay != 0 ) {
+      if ( cpu.speed != 0 ) {
+	App.workspace.highlightBlock( cpu.milestone_id );
+	cpu.milestone_id = 0 ;
+      }
+      cpu.timeoutId = window.setTimeout( cpu.run, delay );
+      return;
+    }
+
+    cpu.milestone_id = 0 ;
   }
 
-  /*  Run at maximal speed between milestones
-   */
-  cpu.next();
+  //  Execution completed
+  //
+  App.workspace.highlightBlock(null);
+  App.workspace.traceOn(false);
+  // App.workspace.readOnly = false ; // No effect
+  cpu.playBtn.style.display = "block";
+  cpu.playBtn.classList.add('disabled');
+  cpu.playBtn.onclick = null;
+  cpu.pauseBtn.style.display = "none";
+  cpu.stepBtn.classList.add('disabled');
+  cpu.stepBtn.onclick = null;
+  cpu.x_run = false ;
+  return ;
 };
-
-
-
-
 
 
 //  Interpreter setup
 //
-cpu.initApi = function ( interpreter, scope )
+cpu.initWrappers = function ( interpreter, scope )
 {
-  //App.log("cpu.initApi");
   var i = interpreter ;
 
   // Wrapper for highlighting blocks.
   //
   var wrapper = function(id) {
     id = id ? id.toString() : '';
-    return i.createPrimitive(cpu.milestone(id));
+    return i.createPrimitive( cpu.milestone_id = id );
   };
   i.setProperty(scope, '__block__', i.createNativeFunction(wrapper));
 
@@ -315,19 +301,16 @@ cpu.initApi = function ( interpreter, scope )
   //
   wrapper = function(n,u){ return i.createPrimitive( cpu.wrapper_pause(n,u) ); };
   i.setProperty( scope, '__pause__', i.createNativeFunction( wrapper ));
-};
 
+  // Wrapper '__hw_write_io__'
+  //
+  wrapper = function(io,v){ return i.createPrimitive( hw.write_io(io,v) ); };
+  i.setProperty( scope, '__hw_write_io__', i.createNativeFunction( wrapper ));
 
-//  Called when the interpreter encounters a __block__ statement
-//
-cpu.milestone = function ( id )
-{
-  //App.log("cpu.milestone("+id+")");
-
-//  console.log("cpu.milestone");
-  cpu.x_milestone = true ;
-  if ( cpu.x_showsteps )
-    App.workspace.highlightBlock(id);
+  // Wrapper '__hw_read_io__'
+  //
+  wrapper = function(io){ return i.createPrimitive( hw.read_io(io) ); };
+  i.setProperty( scope, '__hw_read_io__', i.createNativeFunction( wrapper ));
 };
 
 
@@ -341,7 +324,6 @@ cpu.wrapper_pause = function( n, u )
   else if ( u == "us" || u == "cy" )
     ms = ms / 1000 ;
   if ( ms >= 1 ) {
-//    console.log("Pause("+n+","+u+"): "+ms+" ms.");
     cpu.wrapped_pause = ms ;
   }
 };
