@@ -1,0 +1,80 @@
+
+html {
+    height: 100%;
+}
+
+body {
+    box-sizing: border-box;
+    height: 100%;
+    font-family: sans-serif;
+    padding: 0px;
+    margin: 0px;
+    border: 8px solid #fff;
+    overflow: hidden;
+}
+
+#codeArea {
+    display: flex;
+}
+
+#blocklyDiv {
+    min-height: 100px;
+    min-width: 200px;
+}
+
+/* #consoleSplitter { */
+/*     height: 4px; */
+/* } */
+
+/* #consoleSplitter:hover { */
+/*     background-color: #aaa; */
+/*     cursor: row-resize; */
+/* } */
+
+#consoleDiv {
+    margin: 0;
+    border: 1px solid #ddd;
+    padding: 2px;
+    overflow: auto;
+    height: 10em;
+    /* min-height: 2em; */
+
+    min-width: 20ch;
+    min-height: 5em;
+
+    white-space: pre-wrap;
+    font-family: monospace;
+}
+
+/* #consoleDiv span.sim { */
+/*     margin-left: 2ch; */
+/*     color: #00f; */
+/* } */
+
+#modal {
+    display: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9;
+    background-color: rgba(0,0,0,0.4);
+}
+
+#modal-discard-confirm {
+    display: none;
+    background-color: #eee;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    box-shadow: 10px 10px 5px 0px #000;
+    width: 30ch;
+}
+
+/* g.blocklyIconGroup { */
+/*     display: none; */
+/* } */
+
+/* g.blocklyIconGroup:hover { */
+/*     display: block; */
+/* } */

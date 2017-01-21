@@ -1,0 +1,38 @@
+
+#topbar {
+    background-color: #ddd;
+    margin-bottom: 4px;
+    padding: 4px;
+    display:flex;
+    align-items:center;
+}
+
+#appname {
+    font-size: 150%;
+    font-weight: bold;
+    margin-right: 20px;
+}
+
+.icon {
+    height: 28px;
+    cursor: pointer;
+}
+
+.icon:hover {
+    /* outline: 1px solid #888; */
+    box-shadow: 0 0 2pt 1pt #888;
+    background-color: #eee;    
+}
+
+.icon.disabled {
+    opacity: 0.2;
+}
+
+#trashIcon {
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+#language {
+    margin-left: auto;
+}

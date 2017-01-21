@@ -1,0 +1,22 @@
+
+#memory {
+    z-index: 2;
+}
+
+#memory .content.visible {
+    display: block;
+}
+
+#memory table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    padding: 2px;
+}
+
+#memory table td {
+    min-width: 20px;
+}
+
+#memory table .value {
+    text-align: right;
+}

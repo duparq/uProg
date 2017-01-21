@@ -1,0 +1,52 @@
+
+html {
+    height: 100%;
+}
+
+body {
+    box-sizing: border-box;
+    height: 100%;
+    font-family: sans-serif;
+    padding: 0px;
+    margin: 0px;
+    border: 8px solid #eee;
+}
+
+#topbar {
+    height: 3em;
+    border: 2px solid red;
+    margin-bottom: 4px;
+}
+
+#blockly {
+    //    box-sizing: border-box;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    //margin: 4px;
+    border: 2px solid green;
+    background-color: #cfc;
+    overflow: auto;
+    height: 50%;
+    min-height: 50px;
+}
+
+#console {
+    margin: 0;
+    border: 2px solid blue;
+    padding: 2px;
+    background-color: #ddd;
+    overflow: auto;
+    height: 200px;
+    min-height: 100px;
+    display: block;
+}
+
+#splitter:hover {
+    background-color: #f88;
+    cursor: row-resize;
+}
+
+#splitter {
+    height: 4px;
+    background-color: #888;
+}

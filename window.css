@@ -1,0 +1,74 @@
+
+.window {
+    position: absolute;
+    box-shadow: 0 0 5pt 1pt #888;
+    background-color: #eee;
+    border: 2px solid #ccc;
+    cursor: default;
+
+    z-index: 2;
+    /* resize: both; */
+    /* min-width: 50px; */
+    /* min-height: 50px; */
+    /* overflow: auto; */
+}
+
+.window .content.visible {
+    display: block;
+}
+
+/* .window.resizable { */
+/*     resize: both; */
+/*     overflow: hidden; */
+/* } */
+
+.window > .bar {
+    height: 1.1em;
+    font-size: 0.9em;
+    padding: 2px;
+    color: #fff;
+    background-color: #00a;
+    display: flex;
+    align-items:center;
+    cursor: move;
+}
+
+.window > .bar .btn {
+    height: 1em;
+    cursor: pointer;
+}
+
+.window > .bar > .plus {
+    display: block;
+}
+
+.window > .bar > .minus {
+    display: none;
+}
+
+.window > .bar > .name {
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.window > .content {
+    display: none;
+    margin: 4px;
+    padding: 4px;
+    background-color: #eee;
+
+    /* resize: both; */
+    /* overflow: auto; */
+}
+
+.window .resizer {
+    height: 12px;
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+    cursor: se-resize;
+}
+
+.window.dialog {
+    display: none;
+}

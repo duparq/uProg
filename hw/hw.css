@@ -1,0 +1,97 @@
+
+#hw .bar .right {
+    margin-left: auto;
+    display: flex;
+    align-items:center;
+}
+
+#hw .bar .right .btn.config {
+    padding-left: 4px;
+}
+
+#hw .content {
+    min-width: 100px;
+    min-height: 100px;
+    max-width: 600px;
+    max-height: 800px;
+}
+
+#hw .content .config {
+    display: none;
+    width: 100%;
+    height: 100%;
+}
+
+#hw .content svg {
+    width: 100%;
+    height: 100%;
+}
+
+#hw .content .device {
+    cursor: default;
+    font-family: sans-serif;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 0;
+    stroke: #000;
+}
+
+#hw .content .device .package {
+    stroke: #111;
+    fill: #111;
+}
+
+#hw .content .device .notch {
+    fill: #444;
+}
+
+#hw .content .device .name {
+    font-size: 60px;
+    fill: #333;
+}
+
+#hw .content .device .pin.io {
+    cursor: pointer;
+}
+
+#hw .content .device .pin .area {
+    display: none;
+    stroke-width: 1px;
+    stroke: #888;
+    stroke-dasharray: 1, 5;
+    fill-opacity: 0;
+}
+
+#hw .content .device .pin .pad {
+    fill: #aaa;
+}
+
+#hw .content .device .pin.on .pad {
+    fill: #f44;
+}
+
+#hw .content .device .pin.off .pad {
+    fill: #44f;
+}
+
+#hw .content .device .pin .name {
+    font-size: 25px;
+    fill: #444;
+}
+
+#hw .content .device .pin.io .area {
+    display: block;
+}
+
+#hw .content .device .pin.io .name {
+    font-size: 40px;
+    fill: #666;
+}
+
+#hw .content .device .pin.on .name {
+    fill: #f44;
+}
+
+#hw .content .device .pin.off .name {
+    fill: #44f;
+}

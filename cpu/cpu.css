@@ -1,0 +1,32 @@
+
+#cpu .content.visible {
+    display:flex;
+    align-items:center;
+}
+
+#cpuSpeed {
+    display:flex;
+    align-items:center;
+}
+
+#cpuSpeedRange {
+    width: 100px;
+}
+
+#cpuSpeedSpan {
+    width:7ch;
+}
+
+#cpu .content .btn {
+    padding: 4px;
+    height: 16px;
+}
+
+#cpu .content .btn:hover {
+    padding: 3px;
+    border: 1px dotted #888 ;
+}
+
+#cpu .content .btn.disabled {
+    opacity: 0.2;
+}

@@ -1,0 +1,209 @@
+﻿<xml xmlns="http://www.w3.org/1999/xhtml">
+  <block type="uprog_start" id=")(|BmC[x;`K`*Z3~p~nz" x="250" y="90">
+    <next>
+      <block type="procedures_callnoreturn" id="F/IiY{Sij5LTKLPNDPKy">
+        <mutation name="faire"></mutation>
+      </block>
+    </next>
+  </block>
+  <block type="procedures_defnoreturn" id="i%D5TY649Qc`-(/NJB)c" x="410" y="90">
+    <field name="NAME">faire</field>
+    <statement name="STACK">
+      <block type="uprog_var_set" id="x.]T+Efnq:i6Q%GdbR,6">
+        <field name="VAR">compte</field>
+        <value name="VALUE">
+          <block type="math_number" id="sz-8*vM_YZaL2sC?Z`}!">
+            <field name="NUM">0</field>
+          </block>
+        </value>
+        <next>
+          <block type="uprog_var_set" id="@^.31OGN0qCb9vnbb/B#">
+            <field name="VAR">dixiemes</field>
+            <value name="VALUE">
+              <block type="math_number" id="+(U7ym55Xeu:vk2q4QC.">
+                <field name="NUM">0</field>
+              </block>
+            </value>
+            <next>
+              <block type="uprog_var_set" id="4Xfpm#:B+_}}rO@RAdkK">
+                <field name="VAR">secondes</field>
+                <value name="VALUE">
+                  <block type="math_number" id="aZ6RNECWBvRxU}zC}?ov">
+                    <field name="NUM">0</field>
+                  </block>
+                </value>
+                <next>
+                  <block type="uprog_while" id="M0,~ya7v=RWFn*Ur5c2d">
+                    <value name="BOOL">
+                      <block type="logic_compare" id="6du)-fmgoYSS/6sz,^mp">
+                        <field name="OP">NEQ</field>
+                        <value name="A">
+                          <block type="uprog_var_get" id="es/:#cC?C1E:[mPZ82Y*">
+                            <field name="VAR">compte</field>
+                          </block>
+                        </value>
+                        <value name="B">
+                          <block type="math_number" id="r.QNpbbF7.UKOP-l2,8d">
+                            <field name="NUM">100</field>
+                          </block>
+                        </value>
+                      </block>
+                    </value>
+                    <statement name="DO">
+                      <block type="uprog_var_set" id=",KAWumeQRl6i8ZuDm|1C">
+                        <field name="VAR">compte</field>
+                        <value name="VALUE">
+                          <block type="math_arithmetic" id="hJ;Aedg{k}5_hf51mf`l">
+                            <field name="OP">ADD</field>
+                            <value name="A">
+                              <shadow type="math_number" id=",PN`r@V+ann9N5u@|]^o">
+                                <field name="NUM">1</field>
+                              </shadow>
+                              <block type="uprog_var_get" id="V#VI^.,I-_ndduu(k:t+">
+                                <field name="VAR">compte</field>
+                              </block>
+                            </value>
+                            <value name="B">
+                              <shadow type="math_number" id="Q6UOiB6,yF1(I]DWwHKf">
+                                <field name="NUM">1</field>
+                              </shadow>
+                            </value>
+                          </block>
+                        </value>
+                        <next>
+                          <block type="uprog_var_set" id="hU~`TXYh*Kngc~:rp;!K">
+                            <field name="VAR">dixiemes</field>
+                            <value name="VALUE">
+                              <block type="math_arithmetic" id="}mPb1^itRI`,{6/3HjK5">
+                                <field name="OP">ADD</field>
+                                <value name="A">
+                                  <shadow type="math_number" id=",PN`r@V+ann9N5u@|]^o">
+                                    <field name="NUM">1</field>
+                                  </shadow>
+                                  <block type="uprog_var_get" id="@y0^vIxLN5q|1Azb~}rw">
+                                    <field name="VAR">dixiemes</field>
+                                  </block>
+                                </value>
+                                <value name="B">
+                                  <shadow type="math_number" id="SMf339GaQJC,@HS7e|nK">
+                                    <field name="NUM">1</field>
+                                  </shadow>
+                                </value>
+                              </block>
+                            </value>
+                            <next>
+                              <block type="uprog_pause" id="r|0YLZ,xu`Gnq+9h~!)I">
+                                <field name="UNIT">ms</field>
+                                <value name="ARG">
+                                  <block type="math_number" id="}v`aT2styjq#6}h]Vg`}">
+                                    <field name="NUM">100</field>
+                                  </block>
+                                </value>
+                                <next>
+                                  <block type="controls_if" id="{N4L}=NFMT]~5x_szgVx">
+                                    <mutation else="1"></mutation>
+                                    <value name="IF0">
+                                      <block type="logic_compare" id="tTXDL#AMTtnZHSxw85i5">
+                                        <field name="OP">LT</field>
+                                        <value name="A">
+                                          <block type="uprog_var_get" id="ur+AWbS+bKZ?yK7}R=~1">
+                                            <field name="VAR">dixiemes</field>
+                                          </block>
+                                        </value>
+                                        <value name="B">
+                                          <block type="math_number" id="?JKd5Y#IsGcqvuKUIFt^">
+                                            <field name="NUM">5</field>
+                                          </block>
+                                        </value>
+                                      </block>
+                                    </value>
+                                    <statement name="DO0">
+                                      <block type="uprog_io_set" id="_d`^ML(mECvotBM[/E,!">
+                                        <field name="VAR">PA0</field>
+                                        <value name="VALUE">
+                                          <block type="math_number" id="ubuTcHA(8iX0:91BzI+T">
+                                            <field name="NUM">0</field>
+                                          </block>
+                                        </value>
+                                      </block>
+                                    </statement>
+                                    <statement name="ELSE">
+                                      <block type="uprog_io_set" id="4_-~Q_M4:%Y;;{g@Ah;p">
+                                        <field name="VAR">PA0</field>
+                                        <value name="VALUE">
+                                          <block type="math_number" id="Ta`oHzLogF;gDi@_]q_|">
+                                            <field name="NUM">1</field>
+                                          </block>
+                                        </value>
+                                        <next>
+                                          <block type="controls_if" id="ibCcDlkwmpmAb[rleD+0">
+                                            <value name="IF0">
+                                              <block type="logic_compare" id="1Uo`k~lGMS1^x[6S{r[a">
+                                                <field name="OP">EQ</field>
+                                                <value name="A">
+                                                  <block type="uprog_var_get" id="W4@dgXFli:_s(xF=QEQg">
+                                                    <field name="VAR">dixiemes</field>
+                                                  </block>
+                                                </value>
+                                                <value name="B">
+                                                  <block type="math_number" id="!F)!{sZ)w#cUE?t~ua5;">
+                                                    <field name="NUM">10</field>
+                                                  </block>
+                                                </value>
+                                              </block>
+                                            </value>
+                                            <statement name="DO0">
+                                              <block type="uprog_var_set" id="W~R)}Db#C-me/C`3WTHh">
+                                                <field name="VAR">dixiemes</field>
+                                                <value name="VALUE">
+                                                  <block type="math_number" id="IiH={8kEE(pN)j8:TPrH">
+                                                    <field name="NUM">0</field>
+                                                  </block>
+                                                </value>
+                                                <next>
+                                                  <block type="uprog_var_set" id="BXCsY~{#q?~DU6`{uN9_">
+                                                    <field name="VAR">secondes</field>
+                                                    <value name="VALUE">
+                                                      <block type="math_arithmetic" id="n.@.iSi%sFl^dmcC;_0]">
+                                                        <field name="OP">ADD</field>
+                                                        <value name="A">
+                                                          <shadow type="math_number" id=",PN`r@V+ann9N5u@|]^o">
+                                                            <field name="NUM">1</field>
+                                                          </shadow>
+                                                          <block type="uprog_var_get" id="lI`gkr9CPi8J`HcBewtB">
+                                                            <field name="VAR">secondes</field>
+                                                          </block>
+                                                        </value>
+                                                        <value name="B">
+                                                          <shadow type="math_number" id="DF(ruzbUtvQjRV-fq@gu">
+                                                            <field name="NUM">1</field>
+                                                          </shadow>
+                                                        </value>
+                                                      </block>
+                                                    </value>
+                                                  </block>
+                                                </next>
+                                              </block>
+                                            </statement>
+                                          </block>
+                                        </next>
+                                      </block>
+                                    </statement>
+                                  </block>
+                                </next>
+                              </block>
+                            </next>
+                          </block>
+                        </next>
+                      </block>
+                    </statement>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </statement>
+  </block>
+</xml>

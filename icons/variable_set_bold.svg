@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 30 260 220">
+  <g stroke-linecap="round" stroke-linejoin="round" stroke="#000" fill="#000"
+     stroke-width="60" transform="translate(30 60)" >
+     <path d="M0 80 L80 0 L80 50 L200 50 L200 110 L80 110 L80 160 Z" />
+  </g>
+
+  <g stroke-linecap="round" stroke-linejoin="round" stroke="#fff" fill="#fff"
+     stroke-width="30" transform="translate(30 60)" >
+     <path d="M0 80 L80 0 L80 50 L200 50 L200 110 L80 110 L80 160 Z" />
+  </g>
+</svg>

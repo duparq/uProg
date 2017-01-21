@@ -1,0 +1,81 @@
+﻿<xml xmlns="http://www.w3.org/1999/xhtml">
+  <block type="procedures_defreturn" id="0*GJ,*yI,*foOmlCKv*q" x="270" y="10">
+    <mutation statements="false">
+      <arg name="x"></arg>
+    </mutation>
+    <field name="NAME">incrementer</field>
+    <comment pinned="false" h="80" w="160">Description de cette fonction</comment>
+    <value name="RETURN">
+      <block type="math_arithmetic" id=";F__M9X1AI(9fI_o4|Nv">
+        <field name="OP">ADD</field>
+        <value name="A">
+          <shadow type="math_number" id=",PN`r@V+ann9N5u@|]^o">
+            <field name="NUM">1</field>
+          </shadow>
+          <block type="variables_get" id="I%Jd(]v6;AHAXV|!izTT">
+            <field name="VAR">x</field>
+          </block>
+        </value>
+        <value name="B">
+          <shadow type="math_number" id="fAeqev~7)G+t[WWeZx[I">
+            <field name="NUM">1</field>
+          </shadow>
+        </value>
+      </block>
+    </value>
+  </block>
+  <block type="procedures_defnoreturn" id="i%D5TY649Qc`-(/NJB)c" x="270" y="110">
+    <field name="NAME">faire</field>
+    <comment pinned="false" h="80" w="160">Décrire cette procédure…</comment>
+    <statement name="STACK">
+      <block type="variables_set" id="x.]T+Efnq:i6Q%GdbR,6">
+        <field name="VAR">compte</field>
+        <value name="VALUE">
+          <block type="math_number" id="sz-8*vM_YZaL2sC?Z`}!">
+            <field name="NUM">0</field>
+          </block>
+        </value>
+        <next>
+          <block type="controls_whileUntil" id="aD1C.?A;ghnxq3*.v|dC">
+            <field name="MODE">WHILE</field>
+            <value name="BOOL">
+              <block type="logic_compare" id="6du)-fmgoYSS/6sz,^mp">
+                <field name="OP">NEQ</field>
+                <value name="A">
+                  <block type="variables_get" id="es/:#cC?C1E:[mPZ82Y*">
+                    <field name="VAR">compte</field>
+                  </block>
+                </value>
+                <value name="B">
+                  <block type="math_number" id="r.QNpbbF7.UKOP-l2,8d">
+                    <field name="NUM">100</field>
+                  </block>
+                </value>
+              </block>
+            </value>
+            <statement name="DO">
+              <block type="variables_set" id="iN2-]r.GCbXGi1;4#j8o">
+                <field name="VAR">compte</field>
+                <value name="VALUE">
+                  <block type="procedures_callreturn" id="CVRZv,u+ET:^vE3p|v7|">
+                    <mutation name="incrementer">
+                      <arg name="x"></arg>
+                    </mutation>
+                    <value name="ARG0">
+                      <block type="variables_get" id="T5AY6h7lkfF]5wH#5#I_">
+                        <field name="VAR">compte</field>
+                      </block>
+                    </value>
+                  </block>
+                </value>
+              </block>
+            </statement>
+          </block>
+        </next>
+      </block>
+    </statement>
+  </block>
+  <block type="procedures_callnoreturn" id="dKLfw*P#O,s,ZXi?Qt~8" x="270" y="310">
+    <mutation name="faire"></mutation>
+  </block>
+</xml>

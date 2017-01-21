@@ -1,0 +1,15 @@
+<?xml-stylesheet type="text/css" href="hw.css" ?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     viewBox="0 0 280 360">
+  <g transform="translate(10 0) scale(10)" >
+    <g class="device">
+      <style> * { cursor: pointer; } </style>
+
+      <use xlink:href="dil8.svg#package"></use>
+
+      <text class="devName" x="9" y="18" transform="rotate(90 9 18)"
+	    style="font-size:10px; stroke-width:0.5; stroke:#aaa;">MCU</text>
+    </g>
+  </g>
+</svg>
